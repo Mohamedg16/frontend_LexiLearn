@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://backend-lexilearn.onrender.com/api',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -65,7 +65,8 @@ api.interceptors.response.use(
 
                 return new Promise((resolve, reject) => {
                     console.log('🔄 Session expired. Attempting token regeneration...');
-                    axios.post('/api/auth/refresh-token', {}, { withCredentials: true })
+                    const baseURL = import.meta.env.VITE_API_URL || 'https://backend-lexilearn.onrender.com/api';
+                    axios.post(`${baseURL}/auth/refresh-token`, {}, { withCredentials: true })
                         .then((res) => {
                             if (res.data.success) {
                                 const { accessToken } = res.data.data;
