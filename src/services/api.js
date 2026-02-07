@@ -9,6 +9,7 @@ const getBaseURL = () => {
         url = url.endsWith('/') ? `${url}api` : `${url}/api`;
     }
 
+    console.log('🔌 API Base URL:', url); // Debugging: Check where requests are going
     return url;
 };
 
