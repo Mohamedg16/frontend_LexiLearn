@@ -140,7 +140,7 @@ const Auth = () => {
 
                 {/* Left Side - Visual/Info */}
                 <div className={`
-                    w-full md:w-1/2 p-10 flex flex-col justify-between relative transition-all duration-500 ease-in-out
+                    w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative transition-all duration-500 ease-in-out
                     ${authMode === 'login' ? 'bg-gradient-to-br from-indigo-600/40 to-purple-600/40' : 'bg-gradient-to-br from-purple-600/40 to-indigo-600/40'}
                 `}>
                     <div className="absolute inset-0 bg-noise opacity-10"></div>
@@ -195,7 +195,7 @@ const Auth = () => {
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="w-full md:w-1/2 p-10 bg-black/20 flex flex-col justify-center">
+                <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 bg-black/20 flex flex-col justify-center">
                     <h3 className="text-2xl font-bold mb-6 text-center">
                         {authMode === 'login' && 'Sign In'}
                         {authMode === 'signup' && 'Create Account'}

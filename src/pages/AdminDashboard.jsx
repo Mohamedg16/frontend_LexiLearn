@@ -80,30 +80,30 @@ const DashboardOverview = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Command Center</h1>
-                    <p className="text-gray-500 font-medium">Global intelligence and platform analytics.</p>
+                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Command Center</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Global intelligence and platform analytics.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2">
+                    <button className="px-4 md:px-6 py-2 md:py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center gap-2">
                         <Download size={14} /> Intelligence Export
                     </button>
                 </div>
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {summaryCards.map((card, index) => (
-                    <div key={index} className="glass-card p-8 rounded-[2rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent hover:border-white/20 transition-all group">
+                    <div key={index} className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent hover:border-white/20 transition-all group">
                         <div className="flex items-center justify-between mb-6">
-                            <div className={`p-4 bg-${card.color}-500/20 rounded-[1.25rem] text-${card.color}-400 group-hover:scale-110 transition-transform`}>
-                                <card.icon size={28} />
+                            <div className={`p-3 md:p-4 bg-${card.color}-500/20 rounded-[1.25rem] text-${card.color}-400 group-hover:scale-110 transition-transform`}>
+                                <card.icon size={24} md:size={28} />
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full">{card.trend}</span>
+                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full">{card.trend}</span>
                         </div>
-                        <div className="text-2xl sm:text-3xl lg:text-4xl font-black mb-1 tracking-tight leading-tight py-1">{card.value}</div>
-                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">{card.label}</div>
+                        <div className="text-2xl md:text-3xl lg:text-4xl font-black mb-1 tracking-tight leading-tight py-1">{card.value}</div>
+                        <div className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">{card.label}</div>
                     </div>
                 ))}
             </div>
@@ -112,53 +112,52 @@ const DashboardOverview = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* System Health */}
                 {health && (
-                    <div className="glass-card p-10 rounded-[3rem] border border-white/5 bg-gradient-to-br from-indigo-600/10 to-transparent relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-10 text-white/5 opacity-20"><Activity size={120} /></div>
-                        <h3 className="text-xl font-black uppercase tracking-tight mb-8 flex items-center gap-3">
-                            <Activity className="text-indigo-400" size={24} /> System Kernel Status
+                    <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-white/5 bg-gradient-to-br from-indigo-600/10 to-transparent relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-10 text-white/5 opacity-20 hidden md:block"><Activity size={120} /></div>
+                        <h3 className="text-lg md:text-xl font-black uppercase tracking-tight mb-8 flex items-center gap-3">
+                            <Activity className="text-indigo-400" size={24} /> System Kernel
                         </h3>
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 gap-4 md:gap-6">
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Database Nodes</div>
-                                <div className="text-xl font-bold leading-normal py-1">{health.counts.submissions} <span className="text-[10px] text-indigo-400 font-black">LOGS</span></div>
+                                <div className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Database Nodes</div>
+                                <div className="text-lg md:text-xl font-bold leading-normal py-1">{health.counts.submissions} <span className="text-[9px] md:text-[10px] text-indigo-400 font-black">LOGS</span></div>
                             </div>
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Compute Uptime</div>
-                                <div className="text-xl font-bold leading-normal py-1">{(health.uptime / 3600).toFixed(1)}h</div>
+                                <div className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Compute Uptime</div>
+                                <div className="text-lg md:text-xl font-bold leading-normal py-1">{(health.uptime / 3600).toFixed(1)}h</div>
                             </div>
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Memory Saturation</div>
-                                <div className="text-xl font-bold leading-normal py-1">{(health.memoryUsage.rss / 1024 / 1024).toFixed(0)}MB</div>
+                                <div className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Memory</div>
+                                <div className="text-lg md:text-xl font-bold leading-normal py-1">{(health.memoryUsage.rss / 1024 / 1024).toFixed(0)}MB</div>
                             </div>
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Node Environment</div>
-                                <div className="text-lg font-bold">{health.nodeVersion}</div>
+                                <div className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Node</div>
+                                <div className="text-base md:text-lg font-bold">{health.nodeVersion}</div>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* API Activity Logs */}
-                <div className="glass-card p-10 rounded-[3rem] border border-white/5 bg-gradient-to-br from-red-600/10 to-transparent">
-                    <h3 className="text-xl font-black uppercase tracking-tight mb-8 flex items-center gap-3">
-                        <FileText className="text-red-400" size={24} /> Live Activity Logs
+                <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-white/5 bg-gradient-to-br from-red-600/10 to-transparent">
+                    <h3 className="text-lg md:text-xl font-black uppercase tracking-tight mb-8 flex items-center gap-3">
+                        <FileText className="text-red-400" size={24} /> Activity Logs
                     </h3>
                     <div className="space-y-3">
                         {logs.length > 0 ? logs.slice(0, 5).map((log, i) => (
                             <div key={i} className="flex items-center gap-4 p-4 bg-black/40 rounded-2xl border border-white/5 group border-l-2 border-l-red-500">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-[9px] font-black bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-widest">{log.method}</span>
-                                        <span className="text-xs font-bold text-gray-300 truncate max-w-[150px]">{log.endpoint}</span>
+                                        <span className="text-[8px] md:text-[9px] font-black bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-widest">{log.method}</span>
+                                        <span className="text-xs font-bold text-gray-300 truncate max-w-[100px] md:max-w-[150px]">{log.endpoint}</span>
                                     </div>
-                                    <div className="text-[9px] text-gray-500 font-black uppercase tracking-widest">
+                                    <div className="text-[8px] md:text-[9px] text-gray-500 font-black uppercase tracking-widest">
                                         {log.userId?.fullName || 'SYSTEM'} • {new Date(log.createdAt).toLocaleTimeString()}
                                     </div>
                                 </div>
-                                <span className={`text-[10px] font-black ${log.status < 400 ? 'text-emerald-400' : 'text-rose-500'}`}>{log.status}</span>
+                                <span className={`text-[9px] md:text-[10px] font-black ${log.status < 400 ? 'text-emerald-400' : 'text-rose-500'}`}>{log.status}</span>
                             </div>
                         )) : (
-                            <div className="text-center py-12 text-[10px] font-black uppercase text-gray-600 border border-dashed border-white/10 rounded-3xl">No operational logs decoded</div>
+                            <div className="text-center py-12 text-[10px] font-black uppercase text-gray-600 border border-dashed border-white/10 rounded-3xl">No logs discovered</div>
                         )}
                     </div>
                 </div>

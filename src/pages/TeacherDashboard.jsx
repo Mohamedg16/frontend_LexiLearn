@@ -32,39 +32,38 @@ const TeacherDashboardHome = ({ stats }) => {
     if (!stats) return <DashboardSkeleton />;
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex justify-between items-end">
+        <div className="space-y-6 md:space-y-8 animate-in fade-in duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight uppercase">Faculty Overview</h1>
-                    <p className="text-gray-400 font-medium">Monitoring linguistic data and student proficiency.</p>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase">Faculty Overview</h1>
+                    <p className="text-gray-400 font-medium text-sm md:text-base">Monitoring linguistic data and student proficiency.</p>
                 </div>
                 <div className="bg-indigo-600/20 text-indigo-400 px-4 py-2 rounded-xl border border-indigo-500/20 flex items-center gap-2">
                     <Sparkles size={18} />
-                    <span className="text-sm font-bold uppercase tracking-wider">Academic Year 2024</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Academic Year 2024</span>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {dashboardStats.map((stat, index) => (
-                    <div key={index} className="glass-card p-6 rounded-[2rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent hover:border-white/10 transition-all">
+                    <div key={index} className="glass-card p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent hover:border-white/10 transition-all">
                         <div className="flex items-center justify-between mb-4">
                             <div className={`p-3 rounded-2xl ${colorMap[stat.color]}`}>
-                                <stat.icon size={24} />
+                                <stat.icon size={22} md:size={24} />
                             </div>
                             <TrendingUp size={16} className="text-emerald-500" />
                         </div>
-                        <div className="text-3xl font-black mb-1 leading-normal py-1 overflow-visible">{stat.value}</div>
+                        <div className="text-2xl md:text-3xl font-black mb-1 leading-normal py-1 overflow-visible">{stat.value}</div>
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{stat.label}</div>
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-purple-600/10 to-transparent">
-                    <h3 className="text-xl font-bold mb-6">Research Quick Access</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                <div className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-purple-600/10 to-transparent">
+                    <h3 className="text-lg md:text-xl font-bold mb-6">Research Quick Access</h3>
                     <div className="grid grid-cols-2 gap-4">
-
                         <NavLink to="/teacher-dashboard/speech-assessments" className="p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5">
                             <Mic size={24} className="text-rose-400 mb-2" />
                             <div className="font-bold text-sm">Speech Data</div>
@@ -72,8 +71,8 @@ const TeacherDashboardHome = ({ stats }) => {
                     </div>
                 </div>
 
-                <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-emerald-600/10 to-transparent">
-                    <h3 className="text-xl font-bold mb-6">Analytic Insights</h3>
+                <div className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-emerald-600/10 to-transparent">
+                    <h3 className="text-lg md:text-xl font-bold mb-6">Analytic Insights</h3>
                     <p className="text-gray-400 text-sm leading-relaxed mb-6">
                         Linguistic diversity across your assigned modules has increased by <span className="text-emerald-400 font-bold">12%</span> this month. Review the latest speech assessments for A2 students.
                     </p>
@@ -118,21 +117,21 @@ const AnalyticsSuite = () => {
     );
 
     return (
-        <div className="space-y-10 animate-in fade-in zoom-in-95 duration-700">
-            <div className="flex justify-between items-end">
+        <div className="space-y-6 md:space-y-10 animate-in fade-in zoom-in-95 duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Research Analytics</h1>
-                    <p className="text-gray-500 font-medium">Aggregate linguistic proficiency data across all student nodes.</p>
+                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Research Analytics</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Aggregate linguistic proficiency data across all student nodes.</p>
                 </div>
-                <div className="bg-indigo-600/10 text-indigo-400 px-6 py-3 rounded-2xl border border-indigo-500/10 flex items-center gap-2">
+                <div className="bg-indigo-600/10 text-indigo-400 px-4 md:px-6 py-2 md:py-3 rounded-2xl border border-indigo-500/10 flex items-center gap-2">
                     <Activity size={18} />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Real-time Telemetry</span>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-indigo-500/10 to-transparent relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 text-indigo-500/5 group-hover:scale-110 transition-transform"><TrendingUp size={120} /></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-indigo-500/10 to-transparent relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 text-indigo-500/5 group-hover:scale-110 transition-transform hidden md:block"><TrendingUp size={120} /></div>
                     <div className="relative z-10">
                         <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-3">Mean Sophistication</div>
                         <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight py-2">{data?.overview?.avgSophistication}%</div>
@@ -141,34 +140,34 @@ const AnalyticsSuite = () => {
                         </div>
                     </div>
                 </div>
-                <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-rose-500/10 to-transparent relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 text-rose-500/5 group-hover:scale-110 transition-transform"><Sparkles size={120} /></div>
+                <div className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-rose-500/10 to-transparent relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 text-rose-500/5 group-hover:scale-110 transition-transform hidden md:block"><Sparkles size={120} /></div>
                     <div className="relative z-10">
                         <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-3">Mean Density</div>
                         <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight py-2">{data?.overview?.avgDensity}%</div>
                         <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Density Saturation</div>
                     </div>
                 </div>
-                <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-emerald-500/10 to-transparent relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 text-emerald-500/5 group-hover:scale-110 transition-transform"><CheckCircle size={120} /></div>
+                <div className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-emerald-500/10 to-transparent relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 text-emerald-500/5 group-hover:scale-110 transition-transform hidden md:block"><CheckCircle size={120} /></div>
                     <div className="relative z-10">
                         <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-3">Lexical Diversity</div>
                         <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight py-2">{data?.overview?.avgDiversity}%</div>
                         <div className="text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                            <Users size={14} /> {data?.overview?.activeCohortCount} Active Student Nodes
+                            <Users size={14} /> {data?.overview?.activeCohortCount} Nodes
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="glass-card p-12 rounded-[3.5rem] border border-white/5 bg-black/40 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-12 text-white/5"><BarChart3 size={160} /></div>
+            <div className="glass-card p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-white/5 bg-black/40 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-12 text-white/5 hidden md:block"><BarChart3 size={160} /></div>
                 <div className="relative z-10">
-                    <h3 className="text-2xl font-black mb-12 uppercase tracking-tight flex items-center gap-3">
+                    <h3 className="text-xl md:text-2xl font-black mb-12 uppercase tracking-tight flex items-center gap-3">
                         <Activity className="text-indigo-400" size={24} />
-                        Linguistic Pulse: Interaction Frequency
+                        Linguistic Pulse
                     </h3>
-                    <div className="h-64 flex items-end justify-between gap-6 px-4">
+                    <div className="h-64 flex items-end justify-between gap-2 md:gap-6 px-4">
                         {data?.interactionFrequency?.length > 0 ? (
                             data.interactionFrequency.map((day, i) => {
                                 const maxCount = Math.max(...data.interactionFrequency.map(d => d.count), 1);
@@ -417,25 +416,25 @@ const TeacherDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-h-screen max-w-7xl mx-auto">
+            <div className="flex-1 flex flex-col min-h-screen">
                 {/* Top Bar */}
-                <div className="p-8 flex items-center justify-between">
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-2 text-white"><Menu size={24} /></button>
+                <div className="p-4 md:p-8 flex items-center justify-between sticky top-0 bg-black/50 backdrop-blur-3xl z-40 border-b border-white/5">
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-3 bg-white/5 rounded-2xl transition-all active:scale-95 text-white"><Menu size={20} /></button>
                     <div className="flex-1"></div>
-                    <div className="flex items-center gap-6">
-                        <div className="text-right hidden md:block">
-                            <div className="font-black text-sm uppercase">{currentUser?.fullName || currentUser?.name}</div>
+                    <div className="flex items-center gap-4 md:gap-6">
+                        <div className="text-right hidden sm:block">
+                            <div className="font-black text-sm uppercase line-clamp-1">{currentUser?.fullName || currentUser?.name}</div>
                             <div className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">English Faculty</div>
                         </div>
                         <img
                             src={currentUser?.profilePicture || `https://ui-avatars.com/api/?name=${currentUser?.fullName || currentUser?.name}&background=random`}
-                            className="w-12 h-12 rounded-2xl border-2 border-white/10 bg-white/5"
+                            className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border-2 border-white/10 bg-white/5"
                         />
                     </div>
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 p-8 pt-0 overflow-y-auto">
+                <div className="flex-1 p-4 md:p-8 md:pt-0 overflow-y-auto w-full max-w-7xl mx-auto">
                     <Routes>
                         <Route path="/" element={<TeacherDashboardHome stats={stats} />} />
 

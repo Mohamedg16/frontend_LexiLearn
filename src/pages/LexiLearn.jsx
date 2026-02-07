@@ -83,7 +83,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-250px)] animate-slide-up">
+        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)] lg:h-[calc(100vh-250px)] animate-slide-up">
             {/* Main Chat Interface */}
             <div className="flex-1 bg-[#0a0a0c]/60 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col relative border border-white/5">
                 {/* Header with Timer */}
@@ -141,7 +141,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-6 bg-white/5 border-t border-white/10">
+                <div className="p-4 md:p-6 bg-white/5 border-t border-white/10">
                     <div className="relative flex gap-3">
                         <input
                             type="text"
@@ -149,12 +149,12 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                             placeholder="Type your message..."
-                            className="flex-1 bg-white/5 border border-white/20 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500 transition-all text-white"
+                            className="flex-1 bg-white/5 border border-white/20 rounded-2xl px-4 md:px-6 py-3 md:py-4 outline-none focus:border-indigo-500 transition-all text-white text-sm md:text-base"
                         />
                         <button
                             onClick={handleSend}
                             disabled={loading || !input.trim()}
-                            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white p-4 rounded-2xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white p-3 md:p-4 rounded-2xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
                         >
                             <Send size={24} />
                         </button>
@@ -171,7 +171,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
             </div>
 
             {/* Vocabulary Bank Sidebar */}
-            <div className="w-full lg:w-80 glass rounded-3xl p-6 flex flex-col gap-6">
+            <div className="w-full lg:w-80 glass rounded-3xl p-6 flex flex-col gap-6 lg:h-full lg:overflow-y-auto">
                 <div className="flex items-center gap-2 text-indigo-400">
                     <Languages size={20} />
                     <h4 className="font-bold uppercase tracking-wider text-sm">Vocabulary Bank</h4>
@@ -265,13 +265,13 @@ const IndependentPerformance = ({ onComplete }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[500px] gap-12 animate-in fade-in zoom-in duration-500">
-            <div className="text-center space-y-4">
-                <h2 className="text-3xl font-bold text-white uppercase tracking-[0.2em]">Independent Performance</h2>
+        <div className="flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] gap-8 md:gap-12 animate-in fade-in zoom-in duration-500">
+            <div className="text-center space-y-4 px-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-[0.2em]">Independent Performance</h2>
                 <div className="flex justify-center">
                     <div className="h-1 w-24 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
                 </div>
-                <p className="text-gray-500 max-w-md mx-auto italic">Note: All scaffolding and aids have been removed. Rely on your memory and practice.</p>
+                <p className="text-gray-500 text-sm md:text-base max-w-md mx-auto italic">Note: All scaffolding and aids have been removed. Rely on your memory and practice.</p>
             </div>
 
             <div className="relative">
@@ -291,7 +291,7 @@ const IndependentPerformance = ({ onComplete }) => {
 
                 <button
                     onClick={isRecording ? stopRecording : startRecording}
-                    className={`w-48 h-48 rounded-full flex flex-col items-center justify-center gap-3 transition-all duration-700 shadow-2xl relative z-10 ${isRecording ? 'bg-red-500 shadow-red-500/40 ring-8 ring-red-500/20' : 'bg-white shadow-white/10 hover:scale-105 active:scale-95'}`}
+                    className={`w-40 h-40 md:w-48 md:h-48 rounded-full flex flex-col items-center justify-center gap-3 transition-all duration-700 shadow-2xl relative z-10 ${isRecording ? 'bg-red-500 shadow-red-500/40 ring-8 ring-red-500/20' : 'bg-white shadow-white/10 hover:scale-105 active:scale-95'}`}
                 >
                     {isRecording ? (
                         <>
@@ -376,25 +376,25 @@ const AnalyticsReflection = ({ analysis, transcription, suggestedWords = [] }) =
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <MetricGauge label="Lexical Diversity" value={analysis.mtldScore?.toFixed(1) || 0} color="bg-cyan-400" unit="" />
                 <MetricGauge label="Sophistication" value={analysis.lexicalSophistication || 0} color="bg-purple-400" />
-                <MetricGauge label="Density" value={analysis.lexicalDensity || 0} color="bg-amber-400" />
+                <MetricGauge label="Density Index" value={analysis.lexicalDensity || 0} color="bg-amber-400" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Interactive Transcript */}
-                <div className="lg:col-span-2 glass rounded-3xl overflow-hidden flex flex-col min-h-[500px]">
-                    <div className="p-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
-                        <h3 className="font-bold flex items-center gap-2"><MessageSquare size={20} className="text-indigo-400" /> Interactive Transcript</h3>
-                        <div className="flex gap-4 text-xs">
+                <div className="lg:col-span-2 glass rounded-3xl overflow-hidden flex flex-col min-h-[400px] md:min-h-[500px]">
+                    <div className="p-4 md:p-6 border-b border-white/10 bg-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <h3 className="font-bold flex items-center gap-2 text-sm md:text-base"><MessageSquare size={20} className="text-indigo-400" /> Interactive Transcript</h3>
+                        <div className="flex flex-wrap gap-4 text-[10px] md:text-xs">
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-400"></div> Used Tier 3</span>
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-indigo-400"></div> Academic</span>
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-rose-400"></div> Repetitive</span>
                         </div>
                     </div>
-                    <div className="flex-1 overflow-visible p-8 leading-loose text-lg text-gray-300">
+                    <div className="flex-1 overflow-visible p-6 md:p-8 leading-loose text-base md:text-lg text-gray-300">
                         {analysis.highlightedTranscript ? analysis.highlightedTranscript.map((w, i) => {
                             const isTier3 = usedTier3Words.includes(w.word.toLowerCase());
                             return (
@@ -469,7 +469,7 @@ const AnalyticsReflection = ({ analysis, transcription, suggestedWords = [] }) =
 
                     <button
                         onClick={() => window.location.reload()}
-                        className="w-full bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-bold transition-all border border-white/10 flex items-center justify-center gap-2"
+                        className="w-full bg-white/10 hover:bg-white/20 text-white py-3 md:py-4 rounded-2xl font-bold transition-all border border-white/10 flex items-center justify-center gap-2 text-sm md:text-base"
                     >
                         New Session <ChevronRight size={18} />
                     </button>
@@ -568,14 +568,14 @@ const LexiLearn = () => {
                         <h1 className="text-4xl font-black text-white">LexiLearn</h1>
                         <p className="text-gray-400">Enter a topic to start your three-stage acquisition session.</p>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-3 px-4">
                         <input
                             type="text"
                             value={tempTopic}
                             onChange={(e) => setTempTopic(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && tempTopic && (setTopic(tempTopic), setIsTopicSet(true))}
                             placeholder="e.g., Artificial Intelligence, Climate Change"
-                            className="w-full bg-white/5 border border-white/20 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500 transition-all text-center text-xl font-medium"
+                            className="w-full bg-white/5 border border-white/20 rounded-2xl px-4 md:px-6 py-4 md:py-5 outline-none focus:border-indigo-500 transition-all text-center text-lg md:text-xl font-medium"
                         />
                         <button
                             onClick={() => {
@@ -584,7 +584,7 @@ const LexiLearn = () => {
                                     setIsTopicSet(true);
                                 }
                             }}
-                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-2xl font-bold text-xl transition-all shadow-xl shadow-indigo-500/30 active:scale-95"
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 md:py-5 rounded-2xl font-bold text-lg md:text-xl transition-all shadow-xl shadow-indigo-500/30 active:scale-95"
                         >
                             Start Session
                         </button>
@@ -604,27 +604,27 @@ const LexiLearn = () => {
 
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Progress Header */}
-                <div className="flex justify-between items-center mb-12">
-                    <div className="flex items-center gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-12 gap-6">
+                    <div className="flex items-center gap-3 md:gap-6 overflow-x-auto pb-4 md:pb-0 w-full md:w-auto">
                         {[1, 2, 3].map((num) => (
-                            <div key={num} className="flex items-center gap-2">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${phase === num ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 ring-4 ring-indigo-500/20' :
+                            <div key={num} className="flex items-center gap-2 shrink-0">
+                                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold transition-all text-xs md:text-base ${phase === num ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 ring-4 ring-indigo-500/20' :
                                     phase > num ? 'bg-emerald-500 text-white' : 'bg-white/5 text-gray-500'
                                     }`}>
-                                    {phase > num ? <CheckCircle2 size={24} /> : num}
+                                    {phase > num ? <CheckCircle2 size={18} md:size={24} /> : num}
                                 </div>
-                                <span className={`text-sm font-bold hidden md:block ${phase === num ? 'text-white' : 'text-gray-500'}`}>
+                                <span className={`text-[10px] md:text-sm font-bold ${phase === num ? 'text-white' : 'text-gray-500'}`}>
                                     {num === 1 ? 'Scaffolding' : num === 2 ? 'Independence' : 'Analytics'}
                                 </span>
-                                {num < 3 && <div className="hidden md:block w-12 h-1 bg-white/5 rounded-full mx-2"></div>}
+                                {num < 3 && <div className="hidden sm:block w-8 md:w-12 h-1 bg-white/5 rounded-full mx-1 md:mx-2"></div>}
                             </div>
                         ))}
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-gray-400">
+                    <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                        <div className="px-3 md:px-4 py-1.5 md:py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] md:text-xs font-bold text-gray-400">
                             Topic: <span className="text-white">{topic}</span>
                         </div>
-                        <button onClick={() => window.location.reload()} className="text-gray-500 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest">
+                        <button onClick={() => window.location.reload()} className="text-gray-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
                             Reset
                         </button>
                     </div>
@@ -643,12 +643,12 @@ const LexiLearn = () => {
                     {phase === 2 && (
                         <div className="space-y-8 animate-in fade-in duration-500">
                             {/* Anti-Cheat: Scaffolding hidden during recording */}
-                            <div className="glass p-8 rounded-3xl border border-white/10 bg-indigo-600/5 text-center space-y-4">
+                            <div className="glass p-6 md:p-8 rounded-2xl md:rounded-3xl border border-white/10 bg-indigo-600/5 text-center space-y-4">
                                 <div className="p-3 bg-indigo-500/20 rounded-2xl w-fit mx-auto">
                                     <Brain className="text-indigo-400" size={32} />
                                 </div>
-                                <h4 className="text-xl font-bold text-white">Focus & Recall</h4>
-                                <p className="text-gray-400 text-sm max-w-md mx-auto">
+                                <h4 className="text-lg md:text-xl font-bold text-white">Focus & Recall</h4>
+                                <p className="text-gray-400 text-xs md:text-sm max-w-md mx-auto">
                                     Remember the academic synonyms suggested in Phase 1.
                                     Speak naturally and use them to boost your score.
                                 </p>

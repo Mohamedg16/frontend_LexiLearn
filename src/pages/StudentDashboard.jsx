@@ -43,10 +43,10 @@ const LinguisticJourney = () => {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex justify-between items-center">
+        <div className="space-y-6 md:space-y-8 animate-in fade-in duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Linguistic Journey</h1>
+                    <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight">Linguistic Journey</h1>
                     <p className="text-gray-500 font-medium">Historical record of your AI-analyzed speech patterns.</p>
                 </div>
                 <div className="bg-indigo-600/10 text-indigo-400 px-6 py-3 rounded-2xl border border-indigo-500/10 flex items-center gap-2">
@@ -70,8 +70,8 @@ const LinguisticJourney = () => {
                     </div>
                 ) : (
                     history.map(item => (
-                        <div key={item._id} className="glass-card p-8 rounded-[3rem] border border-white/5 hover:border-indigo-500/40 transition-all group bg-gradient-to-br from-white/5 to-transparent">
-                            <div className="flex flex-col lg:flex-row gap-8">
+                        <div key={item._id} className="glass-card p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-white/5 hover:border-indigo-500/40 transition-all group bg-gradient-to-br from-white/5 to-transparent">
+                            <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
                                 <div className="flex-1 space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
@@ -98,8 +98,8 @@ const LinguisticJourney = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-black/40 rounded-[2rem] p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative group/text">
-                                        <div className="absolute top-4 right-6 text-indigo-500/20"><FileText size={40} /></div>
+                                    <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative group/text">
+                                        <div className="absolute top-4 right-6 text-indigo-500/20 hidden md:block"><FileText size={40} /></div>
                                         "{item.transcription}"
                                     </div>
 
@@ -220,16 +220,16 @@ const AIChatHistory = () => {
                 </button>
 
                 <div className="glass-card rounded-[3rem] border border-white/5 overflow-hidden bg-black/40">
-                    <div className="p-10 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                    <div className="p-6 md:p-10 border-b border-white/5 bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-indigo-400">{selectedItem.title}</h2>
+                            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-indigo-400">{selectedItem.title}</h2>
                             <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-2">
                                 Session Signature: {new Date(selectedItem.createdAt).toLocaleString()}
                             </p>
                         </div>
                         <div className="px-4 py-1.5 bg-indigo-600/20 text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-600/20">Text Node</div>
                     </div>
-                    <div className="p-10 space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                    <div className="p-6 md:p-10 space-y-6 md:space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
                         {selectedItem.messages.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[80%] p-6 rounded-[2rem] text-sm leading-relaxed ${msg.role === 'user'
@@ -259,7 +259,7 @@ const AIChatHistory = () => {
                     <ChevronRight className="rotate-180" size={16} /> Back to Archives
                 </button>
 
-                <div className="glass-card p-10 rounded-[3rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent">
+                <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent">
                     <div className="flex flex-col lg:flex-row gap-8">
                         <div className="flex-1 space-y-6">
                             <div className="flex items-center justify-between">
@@ -278,8 +278,8 @@ const AIChatHistory = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-black/40 rounded-[2rem] p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative">
-                                <div className="absolute top-4 right-6 text-red-500/20"><FileText size={40} /></div>
+                            <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative">
+                                <div className="absolute top-4 right-6 text-red-500/20 hidden md:block"><FileText size={40} /></div>
                                 "{selectedItem.transcription}"
                             </div>
 
@@ -318,8 +318,8 @@ const AIChatHistory = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <div>
-                <h1 className="text-4xl font-black uppercase tracking-tight">AI Discussions</h1>
-                <p className="text-gray-500 font-medium">Historical logs of your cognitive interactions with the AI Core.</p>
+                <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">AI Discussions</h1>
+                <p className="text-gray-500 font-medium text-sm md:text-base">Historical logs of your cognitive interactions with the AI Core.</p>
             </div>
 
             <div className="glass-card rounded-[2.5rem] border border-white/5 overflow-hidden bg-black/40">
@@ -335,10 +335,10 @@ const AIChatHistory = () => {
                     <tbody className="divide-y divide-white/5">
                         {history.length === 0 ? (
                             <tr>
-                                <td colSpan="4" className="p-32 text-center">
+                                <td colSpan="4" className="p-20 md:p-32 text-center">
                                     <div className="flex flex-col items-center gap-4 text-gray-500">
                                         <MessageSquare size={48} className="opacity-20" />
-                                        <span className="font-black uppercase tracking-widest text-xs">No conversations discovered in the neural core</span>
+                                        <span className="font-black uppercase tracking-widest text-xs">No conversations discovered</span>
                                         <NavLink to="/lexilearn" className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-indigo-700">Initiate First Link</NavLink>
                                     </div>
                                 </td>
@@ -346,7 +346,7 @@ const AIChatHistory = () => {
                         ) : (
                             history.map((item) => (
                                 <tr key={item._id} className="hover:bg-white/[0.02] transition-colors group">
-                                    <td className="p-8">
+                                    <td className="p-4 md:p-8">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.type === 'voice'
                                             ? 'bg-red-600/10 text-red-500 border border-red-500/20'
                                             : 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20'
@@ -354,7 +354,7 @@ const AIChatHistory = () => {
                                             {item.type === 'voice' ? <Mic size={18} /> : <MessageSquare size={18} />}
                                         </div>
                                     </td>
-                                    <td className="p-8">
+                                    <td className="p-4 md:p-8">
                                         <div className="font-black text-sm uppercase tracking-tight text-white group-hover:text-indigo-400 transition-colors line-clamp-1">
                                             {item.title}
                                         </div>
@@ -432,7 +432,7 @@ const MyAssignments = () => {
                         <p className="text-gray-500 font-medium">All assigned curriculum objectives have been met.</p>
                     </div>
                 ) : tasks.map(task => (
-                    <div key={task._id} className="glass-card p-10 rounded-[3rem] border border-white/5 hover:border-red-500/30 transition-all flex flex-col justify-between bg-gradient-to-br from-white/5 to-transparent hover:scale-[1.02]">
+                    <div key={task._id} className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-white/5 hover:border-red-500/30 transition-all flex flex-col justify-between bg-gradient-to-br from-white/5 to-transparent hover:scale-[1.02]">
                         <div>
                             <div className="flex items-center justify-between mb-8">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] bg-red-600/10 text-red-500 px-4 py-1.5 rounded-full border border-red-500/10">
@@ -492,8 +492,8 @@ const LearningHistory = () => {
                         <p className="text-gray-500 font-medium">Your learning journey begins after your first AI simulation.</p>
                     </div>
                 ) : history.map(item => (
-                    <div key={item._id} className="glass-card rounded-[3rem] overflow-hidden border border-white/5 hover:border-indigo-500/30 transition-all bg-gradient-to-br from-white/5 to-transparent hover:scale-[1.02] group">
-                        <div className="p-8 border-b border-white/5 bg-white/5">
+                    <div key={item._id} className="glass-card rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/5 hover:border-indigo-500/30 transition-all bg-gradient-to-br from-white/5 to-transparent hover:scale-[1.02] group">
+                        <div className="p-6 md:p-8 border-b border-white/5 bg-white/5">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="p-3 bg-indigo-600/20 text-indigo-400 rounded-2xl border border-indigo-500/20"><Mic size={24} /></div>
                                 <div className="text-right">
@@ -504,7 +504,7 @@ const LearningHistory = () => {
                             <h3 className="text-lg font-black text-white truncate uppercase tracking-tight group-hover:text-indigo-400 transition-colors">{item.taskId?.title || item.topic || 'General Practice'}</h3>
                             <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mt-1">{new Date(item.createdAt).toLocaleDateString()}</p>
                         </div>
-                        <div className="p-8 space-y-4">
+                        <div className="p-6 md:p-8 space-y-4">
                             <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
                                 <span className="text-gray-500">Lexical Density</span>
                                 <span className="text-white">{(item.lexicalDensity || 0).toFixed(1)}%</span>
@@ -565,7 +565,7 @@ const Identity = ({ currentUser }) => {
                 <p className="text-gray-500 font-medium">Managing your personal signature within the LinguistX ecosystem.</p>
             </div>
 
-            <div className="glass-card p-12 rounded-[4rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent shadow-2xl space-y-12">
+            <div className="glass-card p-6 md:p-12 rounded-[2.5rem] md:rounded-[4rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent shadow-2xl space-y-8 md:space-y-12">
                 <div className="flex flex-col items-center gap-6">
                     <div className="relative group">
                         <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-indigo-600 rounded-[3rem] blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
@@ -735,10 +735,10 @@ const DashboardHome = ({ currentUser, dashboardData }) => {
                 </div>
             </div>
 
-            <div className="glass-card p-10 rounded-[3.5rem] border border-white/5 relative overflow-hidden">
+            <div className="glass-card p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] border border-white/5 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black uppercase tracking-tight">Active Certifications</h3>
-                    <Award size={24} className="text-gray-700" />
+                    <Award size={24} className="text-gray-700 hidden sm:block" />
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {['Lexical Pioneer', 'Fluency Master', '7-Day Streak', 'Vocab Architect'].map(award => (
@@ -807,11 +807,11 @@ const StudentDashboard = () => {
         <div className="min-h-screen bg-[#050505] text-white flex font-['Outfit','Inter',sans-serif]">
             {/* Sidebar */}
             <div className={`
-                fixed md:static inset-y-0 left-0 z-50 w-80 bg-black border-r border-white/5 
+                fixed md:static inset-y-0 left-0 z-50 w-72 md:w-80 bg-black border-r border-white/5 
                 transform transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
-                <div className="p-10 border-b border-white/5 mb-10">
+                <div className="p-6 md:p-10 border-b border-white/5 mb-6 md:mb-10">
                     <NavLink to="/">
                         <div className="flex items-center gap-5 group cursor-pointer">
                             <div className="w-14 h-14 bg-white rounded-[1.25rem] flex items-center justify-center text-black shadow-2xl shadow-white/10 group-hover:rotate-12 transition-transform">
@@ -869,26 +869,26 @@ const StudentDashboard = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-h-screen">
                 {/* Top Bar */}
-                <div className="p-10 flex items-center justify-between sticky top-0 bg-black/50 backdrop-blur-3xl z-40 border-b border-white/5">
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-3 bg-white/5 rounded-2xl transition-all active:scale-95"><Menu size={24} /></button>
+                <div className="p-4 md:p-10 flex items-center justify-between sticky top-0 bg-black/50 backdrop-blur-3xl z-40 border-b border-white/5">
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-3 bg-white/5 rounded-2xl transition-all active:scale-95"><Menu size={20} /></button>
                     <div className="flex-1"></div>
-                    <div className="flex items-center gap-8">
-                        <div className="text-right hidden md:block">
-                            <div className="font-black text-sm uppercase tracking-tight">{currentUser?.fullName}</div>
-                            <div className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">{currentUser?.level || 'A1 BEGINNER'} ACCESS</div>
+                    <div className="flex items-center gap-4 md:gap-8">
+                        <div className="text-right hidden sm:block">
+                            <div className="font-black text-sm uppercase tracking-tight line-clamp-1">{currentUser?.fullName}</div>
+                            <div className="text-[8px] text-emerald-500 font-black uppercase tracking-widest">{currentUser?.level || 'A1 BEGINNER'} ACCESS</div>
                         </div>
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000"></div>
                             <img
                                 src={currentUser?.profilePicture || `https://ui-avatars.com/api/?name=${currentUser?.fullName}&background=random`}
-                                className="relative w-14 h-14 rounded-2xl border-2 border-black bg-white/5 shadow-2xl"
+                                className="relative w-10 h-10 md:w-14 md:h-14 rounded-2xl border-2 border-black bg-white/5 shadow-2xl"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 p-10 max-w-7xl mx-auto w-full">
+                <div className="flex-1 p-4 md:p-10 max-w-7xl mx-auto w-full">
                     <Routes>
                         <Route path="/" element={<DashboardHome currentUser={currentUser} dashboardData={dashboardData} />} />
                         <Route path="ai-discussions" element={<AIChatHistory />} />
