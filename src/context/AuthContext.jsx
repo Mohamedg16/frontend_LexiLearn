@@ -80,7 +80,12 @@ export const AuthProvider = ({ children }) => {
             }
             return { success: false, error: 'Registration failed' };
         } catch (error) {
-            console.error('Signup error:', error);
+            console.error('❌ Signup error details:', {
+                status: error.response?.status,
+                data: error.response?.data,
+                message: error.message,
+                url: error.config?.url
+            });
             return {
                 success: false,
                 error: error.response?.data?.message || error.message || 'Registration failed'
