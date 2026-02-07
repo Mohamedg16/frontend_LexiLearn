@@ -244,12 +244,12 @@ const UsersManagement = ({ globalSearch, setGlobalSearch }) => {
 
     return (
         <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight">Entity Directory</h1>
-                    <p className="text-gray-500 font-medium">Managing global profiles across the English ecosystem.</p>
+                    <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Entity Directory</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Managing global profiles across the English ecosystem.</p>
                 </div>
-                <div className="bg-red-600/10 text-red-500 px-4 py-2 rounded-xl border border-red-500/10 text-[10px] font-black uppercase tracking-widest">
+                <div className="bg-red-600/10 text-red-500 px-4 py-2 rounded-xl border border-red-500/10 text-[9px] md:text-[10px] font-black uppercase tracking-widest">
                     {users.length} Nodes Indexed
                 </div>
             </div>
@@ -278,16 +278,16 @@ const UsersManagement = ({ globalSearch, setGlobalSearch }) => {
             </div>
 
             {/* Users Table */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
-                <div className="overflow-x-auto">
+            <div className="glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl overflow-x-auto no-scrollbar">
+                <div className="min-w-[800px] md:min-w-full">
                     <table className="w-full">
                         <thead className="bg-white/5 border-b border-white/5">
                             <tr>
-                                <th className="text-left p-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Identity</th>
-                                <th className="text-left p-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Classification</th>
-                                <th className="text-left p-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Enrollment Date</th>
-                                <th className="text-left p-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Operational Status</th>
-                                <th className="text-right p-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Control</th>
+                                <th className="text-left p-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Identity</th>
+                                <th className="text-left p-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Classification</th>
+                                <th className="text-left p-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Enrollment Date</th>
+                                <th className="text-left p-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Operational Status</th>
+                                <th className="text-right p-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Control</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -460,25 +460,25 @@ const StudentsManagement = () => {
 
     return (
         <div className="space-y-8 animate-in slide-in-from-right-4 duration-700">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight">Financial Validation</h1>
-                    <p className="text-gray-500 font-medium">Monitoring monthly dues and English subscription lifecycle.</p>
+                    <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Financial Validation</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Monitoring monthly dues and English subscription lifecycle.</p>
                 </div>
-                <button className="px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-emerald-600/20">
+                <button className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all shadow-xl shadow-emerald-600/20">
                     Bulk Validation
                 </button>
             </div>
 
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40">
-                <table className="w-full">
+            <div className="glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40 overflow-x-auto no-scrollbar">
+                <table className="w-full min-w-[900px] md:min-w-full">
                     <thead className="bg-white/5 border-b border-white/5">
                         <tr>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Auditor</th>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Academic Load</th>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Subscription</th>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Records</th>
-                            <th className="text-right p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Operations</th>
+                            <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Auditor</th>
+                            <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Academic Load</th>
+                            <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Subscription</th>
+                            <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Records</th>
+                            <th className="text-right p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Operations</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -1030,27 +1030,27 @@ const ContentManagement = () => {
 
     return (
         <div className="space-y-8 animate-in zoom-in-95 duration-700">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight">Curriculum Architect</h1>
-                    <p className="text-gray-500 font-medium">Building and refining English pedagogical structures.</p>
+                    <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Curriculum Architect</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Building and refining English pedagogical structures.</p>
                 </div>
-                <div className="flex gap-2 p-1.5 bg-white/5 rounded-[1.5rem] border border-white/5 backdrop-blur-xl">
+                <div className="flex gap-2 p-1.5 bg-white/5 rounded-[1.5rem] border border-white/5 backdrop-blur-xl overflow-x-auto no-scrollbar w-full md:w-auto">
                     <button
                         onClick={() => setActiveTab('videos')}
-                        className={`px-8 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'videos' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
+                        className={`px-6 md:px-8 py-3 rounded-[1.25rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'videos' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
                     >
                         Video Assets
                     </button>
                     <button
                         onClick={() => setActiveTab('lessons')}
-                        className={`px-8 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'lessons' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
+                        className={`px-6 md:px-8 py-3 rounded-[1.25rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'lessons' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
                     >
                         Lessons
                     </button>
                     <button
                         onClick={() => setActiveTab('resources')}
-                        className={`px-8 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'resources' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
+                        className={`px-6 md:px-8 py-3 rounded-[1.25rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'resources' ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'text-gray-500 hover:text-white'}`}
                     >
                         Resource Library
                     </button>
@@ -1116,27 +1116,27 @@ const ContentManagement = () => {
                 </div>
             ) : activeTab === 'lessons' ? (
                 <div className="space-y-6">
-                    <div className="flex justify-between items-center px-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
                         <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Lesson Registry</div>
                         <button
                             onClick={() => {
                                 setFormData({ title: '', description: '', isPublished: true });
                                 setModalMode('add-lesson');
                             }}
-                            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-red-600/20 active:scale-95 flex items-center gap-2"
+                            className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-red-600/20 active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus size={14} /> Add New Lesson
                         </button>
                     </div>
 
-                    <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40">
-                        <table className="w-full">
+                    <div className="glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40 overflow-x-auto no-scrollbar">
+                        <table className="w-full min-w-[800px] md:min-w-full">
                             <thead className="bg-white/5 border-b border-white/5">
                                 <tr>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Lesson Architecture</th>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Description Flow</th>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Payload Metadata</th>
-                                    <th className="text-right p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Control</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Lesson Architecture</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Description Flow</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Payload Metadata</th>
+                                    <th className="text-right p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Control</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
@@ -1144,47 +1144,47 @@ const ContentManagement = () => {
                                     <tr><td colSpan="4" className="p-32 text-center font-black uppercase text-gray-500 tracking-widest">No syllabus nodes discovered</td></tr>
                                 ) : lessons.map(lesson => (
                                     <tr key={lesson._id} className="hover:bg-white/[0.02] transition-colors group text-sm">
-                                        <td className="p-8">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center font-black text-xs text-red-500 border border-red-500/20">
+                                        <td className="p-6 md:p-8">
+                                            <div className="flex items-center gap-3 md:gap-4">
+                                                <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 rounded-lg bg-red-600/10 flex items-center justify-center font-black text-[9px] md:text-xs text-red-500 border border-red-500/20">
                                                     {lesson.order || 1}
                                                 </div>
-                                                <div className="font-black text-white uppercase tracking-tight group-hover:text-red-500 transition-colors">{lesson.title}</div>
+                                                <div className="font-black text-white uppercase tracking-tight group-hover:text-red-500 transition-colors text-xs md:text-sm break-words max-w-[150px] md:max-w-none">{lesson.title}</div>
                                             </div>
                                         </td>
-                                        <td className="p-8">
-                                            <p className="text-gray-500 line-clamp-1 max-w-xs">{lesson.description}</p>
+                                        <td className="p-6 md:p-8">
+                                            <p className="text-gray-500 line-clamp-1 max-w-[150px] md:max-w-xs">{lesson.description}</p>
                                         </td>
-                                        <td className="p-8">
+                                        <td className="p-6 md:p-8">
                                             <div className="flex gap-2">
                                                 {lesson.videoUrl && <Play size={14} className="text-red-500" />}
                                                 {lesson.resources?.length > 0 && <FileText size={14} className="text-emerald-500" />}
-                                                <span className="text-[10px] font-black text-gray-600 uppercase">{lesson.resources?.length || 0} Files</span>
+                                                <span className="text-[9px] md:text-[10px] font-black text-gray-600 uppercase whitespace-nowrap">{lesson.resources?.length || 0} Files</span>
                                             </div>
                                         </td>
-                                        <td className="p-8 text-right">
-                                            <div className="flex justify-end gap-3">
+                                        <td className="p-6 md:p-8 text-right">
+                                            <div className="flex justify-end gap-2 md:gap-3">
                                                 <button
                                                     onClick={() => {
                                                         setFormData({ ...lesson });
                                                         setSelectedItem(lesson);
                                                         setModalMode('edit-lesson');
                                                     }}
-                                                    className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all"
+                                                    className="p-2 md:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all"
                                                 >
-                                                    <Edit size={16} />
+                                                    <Edit size={14} md:size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleOpenAddResource(lesson)}
-                                                    className="p-3 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 rounded-xl border border-emerald-500/10 transition-all"
+                                                    className="p-2 md:p-3 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 rounded-xl border border-emerald-500/10 transition-all font-bold"
                                                 >
-                                                    <Plus size={16} />
+                                                    <Plus size={14} md:size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteLesson(lesson._id)}
-                                                    className="p-3 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-xl border border-red-500/10 transition-all"
+                                                    className="p-2 md:p-3 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-xl border border-red-500/10 transition-all"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={14} md:size={16} />
                                                 </button>
                                             </div>
                                         </td>
@@ -1196,7 +1196,7 @@ const ContentManagement = () => {
                 </div>
             ) : activeTab === 'resources' ? (
                 <div className="space-y-6">
-                    <div className="flex justify-between items-center px-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
                         <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Resource Library</div>
                         <button
                             onClick={() => {
@@ -1205,20 +1205,20 @@ const ContentManagement = () => {
                                 setModalMode('add-resource');
                                 setSelectedItem(null);
                             }}
-                            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-red-600/20 active:scale-95 flex items-center gap-2"
+                            className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-red-600/20 active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus size={14} /> Add New Resource
                         </button>
                     </div>
-                    <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40">
-                        <table className="w-full">
+                    <div className="glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40 overflow-x-auto no-scrollbar">
+                        <table className="w-full min-w-[800px] md:min-w-full">
                             <thead className="bg-white/5 border-b border-white/5">
                                 <tr>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Asset Title</th>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Format</th>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Origin Lesson</th>
-                                    <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Retrieval Data</th>
-                                    <th className="text-right p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Control</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Asset Title</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Format</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Origin Lesson</th>
+                                    <th className="text-left p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Retrieval Data</th>
+                                    <th className="text-right p-6 md:p-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Control</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
@@ -1443,15 +1443,15 @@ const MessagesManagement = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Contact Messages</h1>
+                    <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight">Contact Messages</h1>
                     <p className="text-gray-500 font-medium">Manage incoming messages from the contact form.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto p-1 bg-white/5 rounded-2xl border border-white/5">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${filter === 'all'
+                        className={`px-4 md:px-6 py-3 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all whitespace-nowrap ${filter === 'all'
                             ? 'bg-purple-600 text-white'
                             : 'bg-white/5 text-gray-400 hover:bg-white/10'
                             }`}
@@ -1460,7 +1460,7 @@ const MessagesManagement = () => {
                     </button>
                     <button
                         onClick={() => setFilter('unread')}
-                        className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${filter === 'unread'
+                        className={`px-4 md:px-6 py-3 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all whitespace-nowrap ${filter === 'unread'
                             ? 'bg-purple-600 text-white'
                             : 'bg-white/5 text-gray-400 hover:bg-white/10'
                             }`}
@@ -1469,7 +1469,7 @@ const MessagesManagement = () => {
                     </button>
                     <button
                         onClick={() => setFilter('read')}
-                        className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${filter === 'read'
+                        className={`px-4 md:px-6 py-3 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all whitespace-nowrap ${filter === 'read'
                             ? 'bg-purple-600 text-white'
                             : 'bg-white/5 text-gray-400 hover:bg-white/10'
                             }`}
