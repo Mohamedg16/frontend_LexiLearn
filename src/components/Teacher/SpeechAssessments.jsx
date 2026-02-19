@@ -184,7 +184,7 @@ const SpeechAssessments = () => {
                                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
                                             <Mic size={14} className="text-emerald-500" /> Voice Stream Active
                                         </div>
-                                        <audio controls className="w-full h-10 rounded-lg custom-audio">
+                                        <audio controls crossOrigin="anonymous" className="w-full h-10 rounded-lg custom-audio">
                                             <source
                                                 src={selectedAssessment.audioUrl.startsWith('http')
                                                     ? selectedAssessment.audioUrl

@@ -179,7 +179,7 @@ const AIConversationsLog = () => {
                                             <Mic size={14} /> Audio Recording
                                         </h4>
                                         {selectedConversation.details.audioUrl ? (
-                                            <audio controls className="w-full h-12 custom-audio rounded-xl">
+                                            <audio controls crossOrigin="anonymous" className="w-full h-12 custom-audio rounded-xl">
                                                 <source
                                                     src={selectedConversation.details.audioUrl.startsWith('http')
                                                         ? selectedConversation.details.audioUrl

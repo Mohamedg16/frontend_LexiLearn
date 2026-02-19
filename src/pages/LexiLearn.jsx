@@ -500,7 +500,7 @@ const AnalyticsReflection = ({ analysis, transcription, audioUrl, suggestedWords
                             {audioUrl && (
                                 <div className="flex items-center gap-3">
                                     <Mic size={14} className="text-emerald-500 animate-pulse" />
-                                    <audio controls className="h-8 max-w-[200px] md:max-w-xs custom-audio-mini opacity-60 hover:opacity-100 transition-opacity">
+                                    <audio controls crossOrigin="anonymous" className="h-8 max-w-[200px] md:max-w-xs custom-audio-mini opacity-60 hover:opacity-100 transition-opacity">
                                         <source
                                             src={audioUrl.startsWith('http') ? audioUrl : `${api.defaults.baseURL.replace('/api', '')}${audioUrl}`}
                                             type="audio/webm"
