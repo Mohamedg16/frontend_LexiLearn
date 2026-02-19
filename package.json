@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@elevenlabs/react": "^0.14.0",
     "@tailwindcss/postcss": "^4.1.18",
+    "@vapi-ai/web": "^2.5.2",
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
     "framer-motion": "^12.23.26",

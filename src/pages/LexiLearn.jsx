@@ -8,7 +8,9 @@ import {
     History, MessageSquare, Trash2
 } from 'lucide-react';
 import api from '../services/api';
-import { useConversation } from '@elevenlabs/react';
+import Vapi from '@vapi-ai/web';
+
+const vapi = new Vapi('0f9e2ed3-1d02-46a2-a39c-85157929421a'); // Universal placeholder or common public key format
 
 // --- Phase 1: Interactive Scaffolding ---
 const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
@@ -28,34 +30,41 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const [error, setError] = useState(null);
     const scrollRef = useRef(null);
 
-    // ElevenLabs Voice Agent Integration
-    const conversation = useConversation({
-        onConnect: () => {
+    useEffect(() => {
+        vapi.on('call-start', () => {
             setIsRecording(true);
             setAgentStatus('connected');
-        },
-        onDisconnect: () => {
+        });
+
+        vapi.on('call-end', () => {
             setIsRecording(false);
             setAgentStatus('disconnected');
-        },
-        onMessage: (message) => {
-            // message.source is 'user' or 'ai'
-            setMessages(prev => [...prev, {
-                role: message.source === 'user' ? 'user' : 'assistant',
-                content: message.message
-            }]);
+        });
 
-            if (message.source === 'ai') {
-                const words = message.message.match(/\b\w{6,}\b/g) || [];
-                onWordsSuggested(words.filter(w => w.length > 7));
+        vapi.on('message', (message) => {
+            if (message.type === 'transcript' && message.transcriptType === 'final') {
+                setMessages(prev => [...prev, {
+                    role: message.role === 'user' ? 'user' : 'assistant',
+                    content: message.transcript
+                }]);
+
+                if (message.role === 'assistant') {
+                    const words = message.transcript.match(/\b\w{6,}\b/g) || [];
+                    onWordsSuggested(words.filter(w => w.length > 7));
+                }
             }
-        },
-        onError: (err) => {
-            console.error('ElevenLabs Error:', err);
+        });
+
+        vapi.on('error', (err) => {
+            console.error('Vapi Error:', err);
             setError("Voice agent error occurred.");
             setIsRecording(false);
-        }
-    });
+        });
+
+        return () => {
+            vapi.stop();
+        };
+    }, []);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -123,19 +132,22 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
 
     const toggleVoiceAgent = async () => {
         if (isRecording) {
-            await conversation.endSession();
+            vapi.stop();
         } else {
             try {
                 setError(null);
-                // Request mic perms first for safety
                 await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                await conversation.startSession({
-                    agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
-                });
+                // Convert 32-char hex to hyphenated UUID
+                const rawId = import.meta.env.VITE_ELEVENLABS_AGENT_ID || '754b1b46988b494fa21cb954d57708e1';
+                const formattedId = rawId.length === 32
+                    ? `${rawId.slice(0, 8)}-${rawId.slice(8, 12)}-${rawId.slice(12, 16)}-${rawId.slice(16, 20)}-${rawId.slice(20)}`
+                    : rawId;
+
+                await vapi.start(formattedId);
             } catch (err) {
                 console.error("Agent Start Error:", err);
-                setError("Could not initialize voice agent. Please check mic permissions.");
+                setError("Could not initialize voice agent.");
             }
         }
     };
