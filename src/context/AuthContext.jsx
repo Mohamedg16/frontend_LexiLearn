@@ -75,8 +75,11 @@ export const AuthProvider = ({ children }) => {
             const response = await api.post('/auth/register', payload);
 
             if (response.data.success) {
-                // Return success but don't authenticate yet
-                return { success: true, message: 'Please verify your email.' };
+                const { user, accessToken } = response.data.data;
+                localStorage.setItem('token', accessToken);
+                setCurrentUser(user);
+                setIsAuthenticated(true);
+                return { success: true, user };
             }
             return { success: false, error: 'Registration failed' };
         } catch (error) {

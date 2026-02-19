@@ -97,10 +97,8 @@ const Auth = () => {
             else if (authMode === 'signup') {
                 const result = await signup(formData);
                 if (result.success) {
-                    setSuccess('Registration successful! Redirecting to verification...');
-                    setTimeout(() => {
-                        navigate('/verify-otp', { state: { email: formData.email } });
-                    }, 2000);
+                    setSuccess('Registration successful! Redirecting to your dashboard...');
+                    // Note: Redirect will be handled by AuthContext useEffect
                 } else setError(result.error);
             }
             else if (authMode === 'forgot') {
