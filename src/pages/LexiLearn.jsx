@@ -8,6 +8,7 @@ import {
     History, MessageSquare, Trash2
 } from 'lucide-react';
 import api from '../services/api';
+import { useConversation } from '@elevenlabs/react';
 
 // --- Phase 1: Interactive Scaffolding ---
 const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
@@ -23,10 +24,38 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const [loading, setLoading] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [agentStatus, setAgentStatus] = useState('disconnected');
     const [error, setError] = useState(null);
     const scrollRef = useRef(null);
-    const mediaRecorderRef = useRef(null);
-    const audioChunksRef = useRef([]);
+
+    // ElevenLabs Voice Agent Integration
+    const conversation = useConversation({
+        onConnect: () => {
+            setIsRecording(true);
+            setAgentStatus('connected');
+        },
+        onDisconnect: () => {
+            setIsRecording(false);
+            setAgentStatus('disconnected');
+        },
+        onMessage: (message) => {
+            // message.source is 'user' or 'ai'
+            setMessages(prev => [...prev, {
+                role: message.source === 'user' ? 'user' : 'assistant',
+                content: message.message
+            }]);
+
+            if (message.source === 'ai') {
+                const words = message.message.match(/\b\w{6,}\b/g) || [];
+                onWordsSuggested(words.filter(w => w.length > 7));
+            }
+        },
+        onError: (err) => {
+            console.error('ElevenLabs Error:', err);
+            setError("Voice agent error occurred.");
+            setIsRecording(false);
+        }
+    });
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -92,43 +121,22 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         }
     };
 
-    const startRecording = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
-            audioChunksRef.current = [];
+    const toggleVoiceAgent = async () => {
+        if (isRecording) {
+            await conversation.endSession();
+        } else {
+            try {
+                setError(null);
+                // Request mic perms first for safety
+                await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            mediaRecorderRef.current.ondataavailable = e => {
-                if (e.data.size > 0) {
-                    audioChunksRef.current.push(e.data);
-                }
-            };
-
-            mediaRecorderRef.current.onstop = async () => {
-                if (audioChunksRef.current.length === 0) {
-                    setError("No audio data captured. Please speak again.");
-                    setLoading(false);
-                } else {
-                    const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                    await handleSendVocal(blob);
-                }
-                stream.getTracks().forEach(t => t.stop());
-            };
-
-            // Capture in 1s intervals to be safe
-            mediaRecorderRef.current.start(1000);
-            setIsRecording(true);
-            setError(null);
-        } catch (err) {
-            console.error("Mic Error:", err);
-            setError("Could not access microphone. Please check site permissions.");
-        }
-    };
-
-    const stopRecording = () => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-            mediaRecorderRef.current.stop();
-            setIsRecording(false);
+                await conversation.startSession({
+                    agentId: '754b1b46988b494fa21cb954d57708e1',
+                });
+            } catch (err) {
+                console.error("Agent Start Error:", err);
+                setError("Could not initialize voice agent. Please check mic permissions.");
+            }
         }
     };
 
@@ -234,15 +242,22 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 {/* Input Area */}
                 <div className="p-4 md:p-6 bg-black/40 border-t border-white/5">
                     {isRecording ? (
-                        <div className="flex items-center justify-between bg-red-500/10 border border-red-500/20 p-4 rounded-2xl animate-pulse">
+                        <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl animate-pulse">
                             <div className="flex items-center gap-3">
-                                <div className="flex gap-1">
-                                    {[1, 2, 3, 4].map(n => <div key={n} className="w-1 bg-red-400 rounded-full animate-grow" style={{ animationDelay: `${n * 0.1}s` }} />)}
+                                <div className="flex gap-1 items-end h-6">
+                                    {[1, 2, 3, 4, 5].map(n => (
+                                        <motion.div
+                                            key={n}
+                                            animate={{ height: [8, 24, 8] }}
+                                            transition={{ repeat: Infinity, duration: 0.5, delay: n * 0.1 }}
+                                            className="w-1 bg-emerald-400 rounded-full"
+                                        />
+                                    ))}
                                 </div>
-                                <span className="text-red-400 font-bold text-sm uppercase">Recording Voice...</span>
+                                <span className="text-emerald-400 font-bold text-sm uppercase">Agent Connected - Listening...</span>
                             </div>
-                            <button onClick={stopRecording} className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-red-500/40">
-                                Stop & Send
+                            <button onClick={toggleVoiceAgent} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-emerald-500/40">
+                                End Session
                             </button>
                         </div>
                     ) : (
@@ -257,9 +272,9 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             />
                             <div className="flex gap-2">
                                 <button
-                                    onClick={startRecording}
-                                    title="Speak to AI"
-                                    className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-4 rounded-2xl transition-all border border-white/10"
+                                    onClick={toggleVoiceAgent}
+                                    title="Start AI Voice Agent"
+                                    className="bg-white/5 hover:bg-white/10 text-emerald-400 hover:text-emerald-300 p-4 rounded-2xl transition-all border border-emerald-500/20"
                                 >
                                     <Mic size={24} />
                                 </button>
