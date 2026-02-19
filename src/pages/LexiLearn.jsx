@@ -94,27 +94,48 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderRef.current = new MediaRecorder(stream);
             audioChunksRef.current = [];
-            mediaRecorderRef.current.ondataavailable = e => audioChunksRef.current.push(e.data);
+
+            mediaRecorderRef.current.ondataavailable = e => {
+                if (e.data.size > 0) {
+                    audioChunksRef.current.push(e.data);
+                }
+            };
+
             mediaRecorderRef.current.onstop = async () => {
-                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                await handleSendVocal(blob);
+                if (audioChunksRef.current.length === 0) {
+                    setError("No audio data captured. Please speak again.");
+                    setLoading(false);
+                } else {
+                    const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                    await handleSendVocal(blob);
+                }
                 stream.getTracks().forEach(t => t.stop());
             };
-            mediaRecorderRef.current.start();
+
+            // Capture in 1s intervals to be safe
+            mediaRecorderRef.current.start(1000);
             setIsRecording(true);
+            setError(null);
         } catch (err) {
-            setError("Could not access microphone.");
+            console.error("Mic Error:", err);
+            setError("Could not access microphone. Please check site permissions.");
         }
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
             mediaRecorderRef.current.stop();
             setIsRecording(false);
         }
     };
 
     const handleSendVocal = async (blob) => {
+        if (!blob || blob.size < 100) {
+            setError("Voice recording too short.");
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         const formData = new FormData();
         formData.append('audio', blob, 'vocal.webm');
@@ -133,7 +154,8 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 speakText(response);
             }
         } catch (err) {
-            setError("Voice processing failed.");
+            console.error("Vocal API Error:", err);
+            setError(err.response?.data?.message || "Voice processing failed. Please try typing.");
         } finally {
             setLoading(false);
         }
