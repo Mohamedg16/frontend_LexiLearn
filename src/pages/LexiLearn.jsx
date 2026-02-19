@@ -85,9 +85,12 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 history: messages
             });
             if (res.data.success) {
-                const aiResponse = res.data.data.response;
-                setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
-                // Removed speakText(aiResponse) as per requirements: text mode = text only
+                const { response: aiResponse, audioUrl } = res.data.data;
+                setMessages(prev => [...prev, {
+                    role: 'assistant',
+                    content: aiResponse,
+                    audioUrl: audioUrl
+                }]);
 
                 const words = aiResponse.match(/\b\w{6,}\b/g) || [];
                 onWordsSuggested(words.filter(w => w.length > 7));
