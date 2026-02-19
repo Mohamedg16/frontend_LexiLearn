@@ -163,17 +163,10 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 setMessages(prev => [
                     ...prev,
                     { role: 'user', content: userText, isVoice: true },
-                    { role: 'assistant', content: response, isVoice: true }
+                    { role: 'assistant', content: response, isVoice: true, audioUrl: audioUrl }
                 ]);
 
                 if (audioUrl) {
-                    setMessages(prev => {
-                        const newMsgs = [...prev];
-                        if (newMsgs.length > 0) {
-                            newMsgs[newMsgs.length - 1].audioUrl = audioUrl;
-                        }
-                        return newMsgs;
-                    });
                     playBackendAudio(audioUrl);
                 }
             }
