@@ -234,16 +234,19 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                                                 <span>Voice Message</span>
                                             </div>
                                         )}
+                                        {/* Playback Fallback Button */}
+                                        {msg.audioUrl && msg.role === 'assistant' && (
+                                            <div className="mt-2">
+                                                <button
+                                                    onClick={() => playBackendAudio(msg.audioUrl)}
+                                                    className="flex items-center gap-2 text-xs bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-lg transition-colors border border-indigo-500/30"
+                                                >
+                                                    <Volume2 size={14} />
+                                                    {isSpeaking ? 'Playing...' : 'Play Voice Answer'}
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
-                                    {msg.audioUrl && (
-                                        <button
-                                            onClick={() => playBackendAudio(msg.audioUrl)}
-                                            className="mt-1 p-1 hover:bg-white/10 rounded-lg transition-colors text-indigo-400"
-                                            title="Replay Audio"
-                                        >
-                                            <Volume2 size={18} />
-                                        </button>
-                                    )}
                                 </div>
                             </div>
                         </motion.div>
