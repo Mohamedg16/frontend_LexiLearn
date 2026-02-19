@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { exportToPDF } from '../utils/ExportPDF';
 
 
 // --- Shared Components for Admin ---
@@ -406,6 +405,7 @@ const StudentsManagement = () => {
     const [loading, setLoading] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [viewingStudent, setViewingStudent] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     const fetchStudents = async () => {
         setLoading(true);
@@ -460,22 +460,24 @@ const StudentsManagement = () => {
         }
     };
 
-    const handleExportFinancialPDF = () => {
-        const headers = ['Student Name', 'Academic Load', 'Payment Status', 'Last Validated'];
-        const data = students.map(s => [
-            s.userId?.fullName || 'N/A',
-            `${s.totalLessonsCompleted || 0} Lessons Completed`,
-            s.monthlyPaymentStatus === 'paid' ? 'AUTHENTICATED' : 'DUES UNPAID',
-            s.lastPaymentDate ? new Date(s.lastPaymentDate).toLocaleDateString() : 'NO HISTORY'
-        ]);
-
-        exportToPDF({
-            title: 'Financial Vault - Student Ledger',
-            headers,
-            data,
-            fileName: 'Financial_Report.pdf',
-            statusColumnIndex: 2
-        });
+    const handleExportFinancialPDF = async () => {
+        setExporting(true);
+        try {
+            const response = await api.get('/admin/export-financial-report', { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'financial-validation-report.pdf');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Financial export failed. Please try again.');
+        } finally {
+            setExporting(false);
+        }
     };
 
     return (
@@ -489,9 +491,11 @@ const StudentsManagement = () => {
                 <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                     <button
                         onClick={handleExportFinancialPDF}
-                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20"
+                        disabled={exporting}
+                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Download size={14} /> Export PDF
+                        {exporting ? <Loader2 className="animate-spin" size={14} /> : <Download size={14} />}
+                        {exporting ? 'Exporting...' : 'Export PDF'}
                     </button>
                     <button className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all shadow-xl shadow-emerald-600/20">
                         Bulk Validation
@@ -637,6 +641,7 @@ const TeachersManagement = () => {
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', hourlyRate: 25 });
     const [submitting, setSubmitting] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     const fetchTeachers = async () => {
         setLoading(true);
@@ -699,22 +704,24 @@ const TeachersManagement = () => {
         }
     };
 
-    const handleExportFacultyPDF = () => {
-        const headers = ['Faculty Specialist', 'Email', 'Assigned Modules', 'Status'];
-        const data = teachers.map(t => [
-            t.userId?.fullName || 'N/A',
-            t.userId?.email || 'N/A',
-            `${t.assignedModules?.length || 0} Modules Assigned`,
-            t.userId?.isActive ? 'ACTIVE' : 'OFFLINE'
-        ]);
-
-        exportToPDF({
-            title: 'Faculty Hub - Academic Roster',
-            headers,
-            data,
-            fileName: 'Faculty_Directory.pdf',
-            statusColumnIndex: 3
-        });
+    const handleExportFacultyPDF = async () => {
+        setExporting(true);
+        try {
+            const response = await api.get('/admin/export-faculty-report', { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'faculty-hub-report.pdf');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Faculty export failed. Please try again.');
+        } finally {
+            setExporting(false);
+        }
     };
 
     return (
@@ -728,9 +735,11 @@ const TeachersManagement = () => {
                 <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                     <button
                         onClick={handleExportFacultyPDF}
-                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20"
+                        disabled={exporting}
+                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Download size={14} /> Export PDF
+                        {exporting ? <Loader2 className="animate-spin" size={14} /> : <Download size={14} />}
+                        {exporting ? 'Exporting...' : 'Export PDF'}
                     </button>
                     <button
                         onClick={() => { setModalMode('add'); setFormData({ fullName: '', email: '', password: '', hourlyRate: 25 }); }}
