@@ -180,7 +180,12 @@ const AIConversationsLog = () => {
                                         </h4>
                                         {selectedConversation.details.audioUrl ? (
                                             <audio controls className="w-full h-12 custom-audio rounded-xl">
-                                                <source src={selectedConversation.details.audioUrl} type="audio/mpeg" />
+                                                <source
+                                                    src={selectedConversation.details.audioUrl.startsWith('http')
+                                                        ? selectedConversation.details.audioUrl
+                                                        : `${api.defaults.baseURL.replace('/api', '')}${selectedConversation.details.audioUrl}`}
+                                                    type="audio/webm"
+                                                />
                                                 Your browser does not support audio playback.
                                             </audio>
                                         ) : (

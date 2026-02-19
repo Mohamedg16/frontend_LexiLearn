@@ -437,7 +437,7 @@ const IndependentPerformance = ({ onComplete }) => {
 };
 
 // --- Phase 3: Analytics & Reflection ---
-const AnalyticsReflection = ({ analysis, transcription, suggestedWords = [] }) => {
+const AnalyticsReflection = ({ analysis, transcription, audioUrl, suggestedWords = [] }) => {
     // analysis shape: { mtldScore, lexicalSophistication, lexicalDensity, advancedWords, repetitiveWords, advice, highlightedTranscript }
 
     const MetricGauge = ({ label, value, color, unit = "%" }) => (
@@ -495,7 +495,20 @@ const AnalyticsReflection = ({ analysis, transcription, suggestedWords = [] }) =
                 {/* Interactive Transcript */}
                 <div className="lg:col-span-2 glass rounded-3xl overflow-hidden flex flex-col min-h-[400px] md:min-h-[500px]">
                     <div className="p-4 md:p-6 border-b border-white/10 bg-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <h3 className="font-bold flex items-center gap-2 text-sm md:text-base"><MessageSquare size={20} className="text-indigo-400" /> Interactive Transcript</h3>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="font-bold flex items-center gap-2 text-sm md:text-base"><MessageSquare size={20} className="text-indigo-400" /> Interactive Transcript</h3>
+                            {audioUrl && (
+                                <div className="flex items-center gap-3">
+                                    <Mic size={14} className="text-emerald-500 animate-pulse" />
+                                    <audio controls className="h-8 max-w-[200px] md:max-w-xs custom-audio-mini opacity-60 hover:opacity-100 transition-opacity">
+                                        <source
+                                            src={audioUrl.startsWith('http') ? audioUrl : `${api.defaults.baseURL.replace('/api', '')}${audioUrl}`}
+                                            type="audio/webm"
+                                        />
+                                    </audio>
+                                </div>
+                            )}
+                        </div>
                         <div className="flex flex-wrap gap-4 text-[10px] md:text-xs">
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-400"></div> Used Tier 3</span>
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-indigo-400"></div> Academic</span>
@@ -784,6 +797,7 @@ const LexiLearn = () => {
                                         key="p3"
                                         analysis={analysisResults}
                                         transcription={transcription}
+                                        audioUrl={audioUrl}
                                         suggestedWords={suggestedTier3Words}
                                     />
                                 ) : (

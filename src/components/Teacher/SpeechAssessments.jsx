@@ -161,8 +161,8 @@ const SpeechAssessments = () => {
                                                     <span
                                                         key={i}
                                                         className={`inline-block mr-1 px-1 rounded transition-colors ${w.type === 'academic' ? 'bg-indigo-500/20 text-indigo-400 cursor-help' :
-                                                                w.type === 'filler' ? 'bg-rose-500/20 text-rose-400 cursor-help' :
-                                                                    w.type === 'advanced' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : ''
+                                                            w.type === 'filler' ? 'bg-rose-500/20 text-rose-400 cursor-help' :
+                                                                w.type === 'advanced' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : ''
                                                             }`}
                                                         title={w.type !== 'normal' ? w.type.toUpperCase() : ''}
                                                     >
@@ -185,7 +185,12 @@ const SpeechAssessments = () => {
                                             <Mic size={14} className="text-emerald-500" /> Voice Stream Active
                                         </div>
                                         <audio controls className="w-full h-10 rounded-lg custom-audio">
-                                            <source src={selectedAssessment.audioUrl} type="audio/mpeg" />
+                                            <source
+                                                src={selectedAssessment.audioUrl.startsWith('http')
+                                                    ? selectedAssessment.audioUrl
+                                                    : `${api.defaults.baseURL.replace('/api', '')}${selectedAssessment.audioUrl}`}
+                                                type="audio/webm"
+                                            />
                                             Your browser does not support the audio element.
                                         </audio>
                                     </div>
