@@ -143,7 +143,9 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         formData.append('history', JSON.stringify(messages));
 
         try {
-            const res = await api.post('/lexilearn/tutor-vocal', formData);
+            const res = await api.post('/lexilearn/tutor-vocal', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             if (res.data.success) {
                 const { userText, response } = res.data.data;
                 setMessages(prev => [
