@@ -8,9 +8,6 @@ import {
     History, MessageSquare, Trash2
 } from 'lucide-react';
 import api from '../services/api';
-import Vapi from '@vapi-ai/web';
-
-const vapi = new Vapi('0f9e2ed3-1d02-46a2-a39c-85157929421a'); // Universal placeholder or common public key format
 
 // --- Phase 1: Interactive Scaffolding ---
 const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
@@ -26,45 +23,10 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const [loading, setLoading] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const [agentStatus, setAgentStatus] = useState('disconnected');
     const [error, setError] = useState(null);
     const scrollRef = useRef(null);
-
-    useEffect(() => {
-        vapi.on('call-start', () => {
-            setIsRecording(true);
-            setAgentStatus('connected');
-        });
-
-        vapi.on('call-end', () => {
-            setIsRecording(false);
-            setAgentStatus('disconnected');
-        });
-
-        vapi.on('message', (message) => {
-            if (message.type === 'transcript' && message.transcriptType === 'final') {
-                setMessages(prev => [...prev, {
-                    role: message.role === 'user' ? 'user' : 'assistant',
-                    content: message.transcript
-                }]);
-
-                if (message.role === 'assistant') {
-                    const words = message.transcript.match(/\b\w{6,}\b/g) || [];
-                    onWordsSuggested(words.filter(w => w.length > 7));
-                }
-            }
-        });
-
-        vapi.on('error', (err) => {
-            console.error('Vapi Error:', err);
-            setError("Voice agent error occurred.");
-            setIsRecording(false);
-        });
-
-        return () => {
-            vapi.stop();
-        };
-    }, []);
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -130,25 +92,42 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         }
     };
 
-    const toggleVoiceAgent = async () => {
-        if (isRecording) {
-            vapi.stop();
-        } else {
-            try {
-                setError(null);
-                await navigator.mediaDevices.getUserMedia({ audio: true });
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            audioChunksRef.current = [];
 
-                // Convert 32-char hex to hyphenated UUID
-                const rawId = import.meta.env.VITE_ELEVENLABS_AGENT_ID || '754b1b46988b494fa21cb954d57708e1';
-                const formattedId = rawId.length === 32
-                    ? `${rawId.slice(0, 8)}-${rawId.slice(8, 12)}-${rawId.slice(12, 16)}-${rawId.slice(16, 20)}-${rawId.slice(20)}`
-                    : rawId;
+            mediaRecorderRef.current.ondataavailable = e => {
+                if (e.data.size > 0) {
+                    audioChunksRef.current.push(e.data);
+                }
+            };
 
-                await vapi.start(formattedId);
-            } catch (err) {
-                console.error("Agent Start Error:", err);
-                setError("Could not initialize voice agent.");
-            }
+            mediaRecorderRef.current.onstop = async () => {
+                if (audioChunksRef.current.length === 0) {
+                    setError("No audio data captured. Please speak again.");
+                    setLoading(false);
+                } else {
+                    const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                    await handleSendVocal(blob);
+                }
+                stream.getTracks().forEach(t => t.stop());
+            };
+
+            mediaRecorderRef.current.start(1000);
+            setIsRecording(true);
+            setError(null);
+        } catch (err) {
+            console.error("Mic Error:", err);
+            setError("Could not access microphone.");
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
         }
     };
 
@@ -254,22 +233,15 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 {/* Input Area */}
                 <div className="p-4 md:p-6 bg-black/40 border-t border-white/5">
                     {isRecording ? (
-                        <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl animate-pulse">
+                        <div className="flex items-center justify-between bg-red-500/10 border border-red-500/20 p-4 rounded-2xl animate-pulse">
                             <div className="flex items-center gap-3">
-                                <div className="flex gap-1 items-end h-6">
-                                    {[1, 2, 3, 4, 5].map(n => (
-                                        <motion.div
-                                            key={n}
-                                            animate={{ height: [8, 24, 8] }}
-                                            transition={{ repeat: Infinity, duration: 0.5, delay: n * 0.1 }}
-                                            className="w-1 bg-emerald-400 rounded-full"
-                                        />
-                                    ))}
+                                <div className="flex gap-1">
+                                    {[1, 2, 3, 4].map(n => <div key={n} className="w-1 bg-red-400 rounded-full animate-grow" style={{ animationDelay: `${n * 0.1}s` }} />)}
                                 </div>
-                                <span className="text-emerald-400 font-bold text-sm uppercase">Agent Connected - Listening...</span>
+                                <span className="text-red-400 font-bold text-sm uppercase">Recording Voice...</span>
                             </div>
-                            <button onClick={toggleVoiceAgent} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-emerald-500/40">
-                                End Session
+                            <button onClick={stopRecording} className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-red-500/40">
+                                Stop & Send
                             </button>
                         </div>
                     ) : (
@@ -284,9 +256,9 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             />
                             <div className="flex gap-2">
                                 <button
-                                    onClick={toggleVoiceAgent}
-                                    title="Start AI Voice Agent"
-                                    className="bg-white/5 hover:bg-white/10 text-emerald-400 hover:text-emerald-300 p-4 rounded-2xl transition-all border border-emerald-500/20"
+                                    onClick={startRecording}
+                                    title="Speak to AI"
+                                    className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-4 rounded-2xl transition-all border border-white/10"
                                 >
                                     <Mic size={24} />
                                 </button>
