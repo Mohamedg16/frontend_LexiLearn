@@ -52,7 +52,10 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         if (!url) return;
         const fullUrl = url.startsWith('http') ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
         console.log("🔊 Playing AI Voice:", fullUrl);
-        const audio = new Audio(fullUrl);
+        const audio = new Audio();
+        audio.crossOrigin = "anonymous";
+        audio.src = fullUrl;
+
         audio.onplay = () => setIsSpeaking(true);
         audio.onended = () => setIsSpeaking(false);
         audio.onerror = (e) => {
