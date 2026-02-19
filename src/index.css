@@ -5,7 +5,17 @@
   --color-primary: #4F46E5;
   --color-secondary: #9333EA;
 
-  --animate-blob: blob 7s infinite;
+  @keyframes grow {
+
+    0%,
+    100% {
+      height: 4px;
+    }
+
+    50% {
+      height: 16px;
+    }
+  }
 
   @keyframes blob {
     0% {
@@ -37,7 +47,9 @@
     }
   }
 
+  --animate-blob: blob 7s infinite;
   --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-grow: grow 1s ease-in-out infinite;
 }
 
 body {
