@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { exportToPDF } from '../utils/ExportPDF';
+
 
 // --- Shared Components for Admin ---
 
@@ -458,16 +460,43 @@ const StudentsManagement = () => {
         }
     };
 
+    const handleExportFinancialPDF = () => {
+        const headers = ['Student Name', 'Academic Load', 'Payment Status', 'Last Validated'];
+        const data = students.map(s => [
+            s.userId?.fullName || 'N/A',
+            `${s.totalLessonsCompleted || 0} Lessons Completed`,
+            s.monthlyPaymentStatus === 'paid' ? 'AUTHENTICATED' : 'DUES UNPAID',
+            s.lastPaymentDate ? new Date(s.lastPaymentDate).toLocaleDateString() : 'NO HISTORY'
+        ]);
+
+        exportToPDF({
+            title: 'Financial Vault - Student Ledger',
+            headers,
+            data,
+            fileName: 'Financial_Report.pdf',
+            statusColumnIndex: 2
+        });
+    };
+
     return (
+
         <div className="space-y-8 animate-in slide-in-from-right-4 duration-700">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Financial Validation</h1>
                     <p className="text-gray-500 font-medium text-sm md:text-base">Monitoring monthly dues and English subscription lifecycle.</p>
                 </div>
-                <button className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all shadow-xl shadow-emerald-600/20">
-                    Bulk Validation
-                </button>
+                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                    <button
+                        onClick={handleExportFinancialPDF}
+                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20"
+                    >
+                        <Download size={14} /> Export PDF
+                    </button>
+                    <button className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all shadow-xl shadow-emerald-600/20">
+                        Bulk Validation
+                    </button>
+                </div>
             </div>
 
             <div className="glass-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40 overflow-x-auto no-scrollbar">
@@ -670,19 +699,46 @@ const TeachersManagement = () => {
         }
     };
 
+    const handleExportFacultyPDF = () => {
+        const headers = ['Faculty Specialist', 'Email', 'Assigned Modules', 'Status'];
+        const data = teachers.map(t => [
+            t.userId?.fullName || 'N/A',
+            t.userId?.email || 'N/A',
+            `${t.assignedModules?.length || 0} Modules Assigned`,
+            t.userId?.isActive ? 'ACTIVE' : 'OFFLINE'
+        ]);
+
+        exportToPDF({
+            title: 'Faculty Hub - Academic Roster',
+            headers,
+            data,
+            fileName: 'Faculty_Directory.pdf',
+            statusColumnIndex: 3
+        });
+    };
+
     return (
+
         <div className="space-y-8 animate-in slide-in-from-left-4 duration-700">
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
                     <h1 className="text-3xl font-black uppercase tracking-tight">Faculty Hub</h1>
                     <p className="text-gray-500 font-medium">Overseeing academic specialists in the English research grid.</p>
                 </div>
-                <button
-                    onClick={() => { setModalMode('add'); setFormData({ fullName: '', email: '', password: '', hourlyRate: 25 }); }}
-                    className="px-6 py-4 bg-purple-600 hover:bg-purple-700 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-purple-600/20"
-                >
-                    Onboard Specialist
-                </button>
+                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                    <button
+                        onClick={handleExportFacultyPDF}
+                        className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20"
+                    >
+                        <Download size={14} /> Export PDF
+                    </button>
+                    <button
+                        onClick={() => { setModalMode('add'); setFormData({ fullName: '', email: '', password: '', hourlyRate: 25 }); }}
+                        className="px-6 py-4 bg-purple-600 hover:bg-purple-700 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-purple-600/20"
+                    >
+                        Onboard Specialist
+                    </button>
+                </div>
             </div>
 
             <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black/40">
