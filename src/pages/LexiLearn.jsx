@@ -48,14 +48,17 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         }
     }, [messages]);
 
-    const speakText = (text) => {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
-        window.speechSynthesis.speak(utterance);
+    const playBackendAudio = (url) => {
+        if (!url) return;
+        const fullUrl = url.startsWith('http') ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
+        const audio = new Audio(fullUrl);
+        audio.onplay = () => setIsSpeaking(true);
+        audio.onended = () => setIsSpeaking(false);
+        audio.onerror = () => setIsSpeaking(false);
+        audio.play().catch(e => {
+            console.error("Playback failed:", e);
+            setIsSpeaking(false);
+        });
     };
 
     const handleSend = async (overrideMsg = null) => {
@@ -77,7 +80,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
             if (res.data.success) {
                 const aiResponse = res.data.data.response;
                 setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
-                speakText(aiResponse);
+                // Removed speakText(aiResponse) as per requirements: text mode = text only
 
                 const words = aiResponse.match(/\b\w{6,}\b/g) || [];
                 onWordsSuggested(words.filter(w => w.length > 7));
@@ -147,13 +150,16 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (res.data.success) {
-                const { userText, response } = res.data.data;
+                const { userText, response, audioUrl } = res.data.data;
                 setMessages(prev => [
                     ...prev,
                     { role: 'user', content: userText },
                     { role: 'assistant', content: response }
                 ]);
-                speakText(response);
+
+                if (audioUrl) {
+                    playBackendAudio(audioUrl);
+                }
             }
         } catch (err) {
             console.error("Vocal API Error:", err);
