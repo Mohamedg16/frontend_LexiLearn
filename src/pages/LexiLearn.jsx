@@ -131,7 +131,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 await navigator.mediaDevices.getUserMedia({ audio: true });
 
                 await conversation.startSession({
-                    agentId: '754b1b46988b494fa21cb954d57708e1',
+                    agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
                 });
             } catch (err) {
                 console.error("Agent Start Error:", err);
