@@ -5,7 +5,7 @@ import {
     Mic, Send, StopCircle, BarChart3, Clock,
     BookOpen, Sparkles, AlertCircle, CheckCircle2,
     ChevronRight, Brain, Languages, Lightbulb,
-    History, MessageSquare, Trash2
+    History, MessageSquare, Trash2, Volume2, PlayCircle
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -51,12 +51,16 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const playBackendAudio = (url) => {
         if (!url) return;
         const fullUrl = url.startsWith('http') ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
+        console.log("🔊 Playing AI Voice:", fullUrl);
         const audio = new Audio(fullUrl);
         audio.onplay = () => setIsSpeaking(true);
         audio.onended = () => setIsSpeaking(false);
-        audio.onerror = () => setIsSpeaking(false);
+        audio.onerror = (e) => {
+            console.error("Audio Load Error:", e);
+            setIsSpeaking(false);
+        };
         audio.play().catch(e => {
-            console.error("Playback failed:", e);
+            console.error("Playback Blocked/Failed:", e);
             setIsSpeaking(false);
         });
     };
@@ -152,11 +156,18 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 const { userText, response, audioUrl } = res.data.data;
                 setMessages(prev => [
                     ...prev,
-                    { role: 'user', content: userText },
-                    { role: 'assistant', content: response }
+                    { role: 'user', content: userText, isVoice: true },
+                    { role: 'assistant', content: response, isVoice: true }
                 ]);
 
                 if (audioUrl) {
+                    setMessages(prev => {
+                        const newMsgs = [...prev];
+                        if (newMsgs.length > 0) {
+                            newMsgs[newMsgs.length - 1].audioUrl = audioUrl;
+                        }
+                        return newMsgs;
+                    });
                     playBackendAudio(audioUrl);
                 }
             }
@@ -215,7 +226,26 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             <div className={`max-w-[80%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/20 shadow-lg' : 'bg-[#161625] text-gray-200 border border-white/10 rounded-tl-none'}`}>
-                                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                                <div className="flex justify-between items-start gap-3">
+                                    <div className="flex-1">
+                                        <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                                        {msg.isVoice && msg.role === 'user' && (
+                                            <div className="flex items-center gap-1 mt-2 text-[10px] opacity-60">
+                                                <Mic size={10} />
+                                                <span>Voice Message</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {msg.audioUrl && (
+                                        <button
+                                            onClick={() => playBackendAudio(msg.audioUrl)}
+                                            className="mt-1 p-1 hover:bg-white/10 rounded-lg transition-colors text-indigo-400"
+                                            title="Replay Audio"
+                                        >
+                                            <Volume2 size={18} />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </motion.div>
                     ))}
