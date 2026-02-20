@@ -50,7 +50,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
 
     const playBackendAudio = (url) => {
         if (!url) return;
-        const fullUrl = url.startsWith('http') ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
+        const fullUrl = (url.startsWith('http') || url.startsWith('data:')) ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
         console.log("🔊 Playing AI Voice:", fullUrl);
         const audio = new Audio();
         audio.crossOrigin = "anonymous";
