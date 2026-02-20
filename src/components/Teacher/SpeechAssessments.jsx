@@ -296,45 +296,75 @@ const SpeechAssessments = () => {
                                             <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div> Advanced</span>
                                         </div>
                                     </div>
-                                    <div className="p-6 bg-black/40 text-gray-300 leading-loose text-sm max-h-[400px] overflow-y-auto font-medium">
+                                    <div className="p-6 bg-black/40 text-gray-300 leading-loose text-sm max-h-[600px] overflow-y-auto font-medium space-y-8">
                                         {detailLoading ? (
                                             <div className="flex flex-col items-center justify-center py-10 gap-3">
                                                 <div className="w-6 h-6 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
                                                 <div className="text-[10px] uppercase tracking-widest text-gray-500">Retrieving Full History...</div>
                                             </div>
-                                        ) : selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 ? (
-                                            <div className="space-y-6">
-                                                {selectedDetail.conversationId.messages.map((msg, idx) => (
-                                                    <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                                        <div className={`max-w-[90%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600/10 border border-indigo-500/20 text-indigo-100' : 'bg-white/5 border border-white/5 text-gray-300'}`}>
-                                                            <div className="text-[9px] uppercase font-black mb-1.5 opacity-40 flex items-center gap-2">
-                                                                {msg.role === 'user' ? <User size={10} /> : <Sparkles size={10} />}
-                                                                {msg.role === 'user' ? 'Student' : 'AI Tutor'} • {new Date(msg.timestamp).toLocaleTimeString()}
-                                                            </div>
-                                                            <div className="text-sm leading-relaxed">{msg.content}</div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : selectedAssessment.highlightedTranscript && selectedAssessment.highlightedTranscript.length > 0 ? (
-                                            <div>
-                                                {selectedAssessment.highlightedTranscript.map((w, i) => (
-                                                    <span
-                                                        key={i}
-                                                        className={`inline-block mr-1 px-1 rounded transition-colors ${w.type === 'academic' ? 'bg-indigo-500/20 text-indigo-400 cursor-help' :
-                                                            w.type === 'filler' ? 'bg-rose-500/20 text-rose-400 cursor-help' :
-                                                                w.type === 'advanced' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : ''
-                                                            }`}
-                                                        title={w.type !== 'normal' ? w.type.toUpperCase() : ''}
-                                                    >
-                                                        {w.word}
-                                                    </span>
-                                                ))}
-                                            </div>
                                         ) : (
-                                            <div className="italic text-gray-400">
-                                                "{selectedAssessment.transcription}"
-                                            </div>
+                                            <>
+                                                {/* Phase 1: Scaffolding Chat History */}
+                                                {selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 && (
+                                                    <div className="space-y-6">
+                                                        <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-indigo-400 mb-2 flex items-center gap-2">
+                                                            <MessageSquare size={12} />
+                                                            Phase 1: Interactive Scaffolding (Chat History)
+                                                        </h4>
+                                                        <div className="space-y-4">
+                                                            {selectedDetail.conversationId.messages.map((msg, idx) => (
+                                                                <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                                                    <div className={`max-w-[90%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600/10 border border-indigo-500/20 text-indigo-100' : 'bg-white/5 border border-white/5 text-gray-300'}`}>
+                                                                        <div className="text-[9px] uppercase font-black mb-1.5 opacity-40 flex items-center gap-2">
+                                                                            {msg.role === 'user' ? <User size={10} /> : <Sparkles size={10} />}
+                                                                            {msg.role === 'user' ? 'Student' : 'AI Tutor'} • {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : 'Scaffolding'}
+                                                                        </div>
+                                                                        <div className="text-sm leading-relaxed">{msg.content}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+
+                                                        {selectedDetail.conversationId.finalReport && (
+                                                            <div className="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-xl mt-4">
+                                                                <div className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">Scaffolding Final Evaluation</div>
+                                                                <div className="text-xs text-gray-400 whitespace-pre-wrap">{selectedDetail.conversationId.finalReport}</div>
+                                                            </div>
+                                                        )}
+                                                        <hr className="border-white/5 my-8" />
+                                                    </div>
+                                                )}
+
+                                                {/* Phase 2: Independent Performance Transcript */}
+                                                <div className="space-y-4">
+                                                    <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-emerald-400 mb-2 flex items-center gap-2">
+                                                        <Mic size={12} />
+                                                        Phase 2: Independent Performance (Final Transcript)
+                                                    </h4>
+                                                    <div className="text-base md:text-lg leading-relaxed">
+                                                        {selectedAssessment.highlightedTranscript && selectedAssessment.highlightedTranscript.length > 0 ? (
+                                                            <div>
+                                                                {selectedAssessment.highlightedTranscript.map((w, i) => (
+                                                                    <span
+                                                                        key={i}
+                                                                        className={`inline-block mr-1 px-1 rounded transition-colors ${w.type === 'academic' ? 'bg-indigo-500/20 text-indigo-400 cursor-help' :
+                                                                            w.type === 'filler' ? 'bg-rose-500/20 text-rose-400 cursor-help' :
+                                                                                w.type === 'advanced' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : ''
+                                                                            }`}
+                                                                        title={w.type !== 'normal' ? w.type.toUpperCase() : ''}
+                                                                    >
+                                                                        {w.word}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="italic text-gray-400">
+                                                                "{selectedAssessment.transcription}"
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </>
                                         )}
                                     </div>
                                 </div>
