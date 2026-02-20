@@ -49,8 +49,9 @@ const SpeechAssessments = () => {
         }
     };
 
-    const downloadChatPDF = () => {
+    const generateCandidatePDF = () => {
         if (!selectedDetail) return;
+        console.log("Downloading PDF...");
 
         const doc = new jsPDF();
         const studentName = selectedDetail.studentId?.userId?.fullName || 'Unknown';
@@ -58,19 +59,19 @@ const SpeechAssessments = () => {
         const topic = selectedDetail.topic || 'General Practice';
         const date = new Date(selectedDetail.createdAt).toLocaleString();
 
-        // Header
+        // Header (Clean/White Background)
         doc.setFontSize(22);
         doc.setTextColor(63, 81, 181); // Indigo
-        doc.text('LexiLearn: Chat Assessment Report', 14, 22);
+        doc.text('LexiLearn: Candidate Performance Report', 14, 22);
 
         doc.setFontSize(10);
         doc.setTextColor(100);
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
 
-        // Student Info
+        // Candidate Profile
         doc.setFontSize(14);
         doc.setTextColor(0);
-        doc.text('Candidate Profile:', 14, 45);
+        doc.text('1. Candidate Profile:', 14, 45);
         doc.setFontSize(11);
         doc.text(`Name: ${studentName}`, 14, 52);
         doc.text(`Email: ${studentEmail}`, 14, 59);
@@ -79,7 +80,7 @@ const SpeechAssessments = () => {
 
         // Lexical Stats
         doc.setFontSize(14);
-        doc.text('Linguistic Metrics:', 14, 88);
+        doc.text('2. Linguistic Performance Metrics:', 14, 88);
         const stats = [
             ['Metric', 'Value'],
             ['Lexical Diversity', (selectedDetail.lexicalDiversity || 0).toFixed(1)],
@@ -91,42 +92,62 @@ const SpeechAssessments = () => {
             startY: 93,
             head: [stats[0]],
             body: stats.slice(1),
-            theme: 'striped',
-            headStyles: { fillStyle: [63, 81, 181] }
+            theme: 'grid',
+            headStyles: { fillStyle: [63, 81, 181], textColor: [255, 255, 255] },
+            alternateRowStyles: { fillStyle: [245, 245, 250] }
         });
 
-        // Transcript
+        // Transcript with Color Coding
         doc.setFontSize(14);
-        doc.text('Full Chat History:', 14, doc.autoTable.previous.finalY + 15);
+        doc.setTextColor(0);
+        doc.text('3. Full Annotated Transcript:', 14, doc.autoTable.previous.finalY + 15);
 
-        let startY = doc.autoTable.previous.finalY + 22;
-        const messages = selectedDetail.conversationId?.messages || [
-            { role: 'user', content: selectedDetail.transcription, timestamp: selectedDetail.createdAt }
-        ];
+        // If we have messages, we list them. If only highlightedTranscript (voice phase), we show it colored.
+        let startY = doc.autoTable.previous.finalY + 25;
 
-        messages.forEach((msg) => {
-            const role = msg.role === 'user' ? 'Student' : 'AI Tutor';
-            const timestamp = new Date(msg.timestamp).toLocaleTimeString();
+        if (selectedDetail.conversationId?.messages?.length > 0) {
+            selectedDetail.conversationId.messages.forEach((msg) => {
+                const role = msg.role === 'user' ? 'Student' : 'AI Tutor';
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(msg.role === 'user' ? 0 : 63, 81, 181);
+                doc.text(`${role}:`, 14, startY);
 
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(50);
+                const lines = doc.splitTextToSize(msg.content, 180);
+                doc.text(lines, 14, startY + 5);
+                startY += (lines.length * 5) + 10;
+
+                if (startY > 280) { doc.addPage(); startY = 20; }
+            });
+        } else if (selectedDetail.highlightedTranscript?.length > 0) {
+            // Draw colored words manually for the transcript
             doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(msg.role === 'user' ? 0 : 63);
-            doc.text(`${role} (${timestamp}):`, 14, startY);
+            let currentX = 14;
+            const maxX = 190;
 
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(50);
-            const lines = doc.splitTextToSize(msg.content, 180);
-            doc.text(lines, 14, startY + 5);
+            selectedDetail.highlightedTranscript.forEach((item) => {
+                let color = [50, 50, 50]; // Default
+                if (item.type === 'academic') color = [63, 81, 181]; // Indigo
+                else if (item.type === 'filler' || item.type === 'repetitive') color = [225, 29, 72]; // Rose/Red
+                else if (item.type === 'advanced') color = [16, 185, 129]; // Emerald/Green
 
-            startY += (lines.length * 5) + 12;
+                doc.setTextColor(color[0], color[1], color[2]);
+                const wordWidth = doc.getTextWidth(item.word + ' ');
 
-            if (startY > 270) {
-                doc.addPage();
-                startY = 20;
-            }
-        });
+                if (currentX + wordWidth > maxX) {
+                    currentX = 14;
+                    startY += 6;
+                    if (startY > 280) { doc.addPage(); startY = 20; }
+                }
 
-        doc.save(`${studentName}_LexiLearn_Report.pdf`);
+                doc.text(item.word, currentX, startY);
+                currentX += wordWidth;
+            });
+        }
+
+        doc.save(`${studentName}_LexiLearn_Analysis.pdf`);
     };
 
     const filteredAssessments = assessments.filter(ass =>
@@ -223,7 +244,7 @@ const SpeechAssessments = () => {
                                     <div className="text-[10px] text-gray-400 uppercase tracking-wider">Submitted On</div>
                                     <div className="font-mono text-sm mb-2">{new Date(selectedAssessment.createdAt).toLocaleString()}</div>
                                     <button
-                                        onClick={downloadChatPDF}
+                                        onClick={generateCandidatePDF}
                                         className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
                                     >
                                         <Download size={14} />

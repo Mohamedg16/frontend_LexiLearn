@@ -28,7 +28,8 @@ const AIConversationsLog = () => {
         }
     };
 
-    const downloadBulkReport = () => {
+    const exportLogsToPDF = () => {
+        console.log("Downloading PDF...");
         const doc = new jsPDF();
 
         // Header
@@ -87,7 +88,7 @@ const AIConversationsLog = () => {
                     <p className="text-gray-400 font-medium">Review student discussions with the AI Tutor.</p>
                 </div>
                 <button
-                    onClick={downloadBulkReport}
+                    onClick={exportLogsToPDF}
                     className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-indigo-500/20 active:scale-95"
                 >
                     <Download size={16} />
