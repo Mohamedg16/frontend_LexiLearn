@@ -145,8 +145,6 @@ const LinguisticJourney = () => {
 const AIChatHistory = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [viewMode, setViewMode] = useState('list'); // 'list' | 'text-detail' | 'voice-detail'
 
     const fetchUnifiedHistory = async () => {
         try {
@@ -162,29 +160,12 @@ const AIChatHistory = () => {
         }
     };
 
-    const handleViewDetail = async (item) => {
-        if (item.type === 'text') {
-            try {
-                const res = await api.get(`/ai-chat/conversations/${item._id}`);
-                if (res.data.success) {
-                    setSelectedItem(res.data.data);
-                    setViewMode('text-detail');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        } else {
-            setSelectedItem(item);
-            setViewMode('voice-detail');
-        }
-    };
-
     useEffect(() => {
         fetchUnifiedHistory();
     }, []);
 
     const handleDelete = async (item) => {
-        if (!window.confirm(`Purge this ${item.type === 'voice' ? 'Sonic Transmission' : 'Dialogue'} record?`)) return;
+        if (!window.confirm(`Delete this ${item.type === 'voice' ? 'voice' : 'chat'} record?`)) return;
         try {
             const url = item.type === 'voice'
                 ? `/students/speaking-history/${item._id}`
@@ -196,7 +177,15 @@ const AIChatHistory = () => {
             }
         } catch (err) {
             console.error(err);
-            alert("Encryption lock detected. Deletion failed.");
+            alert("Failed to delete record.");
+        }
+    };
+
+    const handleAnalyzeAudio = (audioUrl) => {
+        if (audioUrl) {
+            window.open(audioUrl, '_blank');
+        } else {
+            alert("Audio recording is unavailable for this session.");
         }
     };
 
@@ -204,192 +193,131 @@ const AIChatHistory = () => {
         return (
             <div className="flex flex-col items-center justify-center p-32 text-gray-500 uppercase font-black tracking-widest gap-4">
                 <Loader2 className="animate-spin" size={48} />
-                Accessing Neural Archives...
-            </div>
-        );
-    }
-
-    if (viewMode === 'text-detail' && selectedItem) {
-        return (
-            <div className="space-y-8 animate-in fade-in duration-500">
-                <button
-                    onClick={() => setViewMode('list')}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px]"
-                >
-                    <ChevronRight className="rotate-180" size={16} /> Back to Archives
-                </button>
-
-                <div className="glass-card rounded-[3rem] border border-white/5 overflow-hidden bg-black/40">
-                    <div className="p-6 md:p-10 border-b border-white/5 bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-indigo-400">{selectedItem.title}</h2>
-                            <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-2">
-                                Session Signature: {new Date(selectedItem.createdAt).toLocaleString()}
-                            </p>
-                        </div>
-                        <div className="px-4 py-1.5 bg-indigo-600/20 text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-600/20">Text Node</div>
-                    </div>
-                    <div className="p-6 md:p-10 space-y-6 md:space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                        {selectedItem.messages.map((msg, idx) => (
-                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[80%] p-6 rounded-[2rem] text-sm leading-relaxed ${msg.role === 'user'
-                                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                                    : 'bg-white/5 text-gray-300 border border-white/5 rounded-tl-none font-medium'
-                                    }`}>
-                                    <div className="text-[8px] font-black uppercase tracking-widest mb-2 opacity-50">
-                                        {msg.role === 'user' ? 'Linguistic Input' : 'AI Analysis'}
-                                    </div>
-                                    {msg.content}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (viewMode === 'voice-detail' && selectedItem) {
-        return (
-            <div className="space-y-8 animate-in fade-in duration-500">
-                <button
-                    onClick={() => setViewMode('list')}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px]"
-                >
-                    <ChevronRight className="rotate-180" size={16} /> Back to Archives
-                </button>
-
-                <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent">
-                    <div className="flex flex-col lg:flex-row gap-8">
-                        <div className="flex-1 space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-red-600/20 rounded-[1.25rem] text-red-400 flex items-center justify-center border border-red-500/20">
-                                        <Mic size={28} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-black uppercase tracking-tight text-white">{selectedItem.title}</h3>
-                                        <p className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">{new Date(selectedItem.displayDate).toLocaleString()}</p>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-4xl font-black text-emerald-400 tracking-tighter">{(selectedItem.lexicalSophistication || 0).toFixed(0)}%</div>
-                                    <div className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">Sophistication</div>
-                                </div>
-                            </div>
-
-                            <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative">
-                                <div className="absolute top-4 right-6 text-red-500/20 hidden md:block"><FileText size={40} /></div>
-                                "{selectedItem.transcription}"
-                            </div>
-
-                            <div className="flex flex-wrap gap-2">
-                                {selectedItem.advancedWords?.map((word, i) => (
-                                    <span key={i} className="px-4 py-1.5 bg-red-500/10 rounded-full text-[10px] text-red-300 font-black uppercase tracking-widest border border-red-500/10">
-                                        {word}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="lg:w-72 space-y-4">
-                            <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between">
-                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Unique Lexicon</div>
-                                <div className="font-black text-white uppercase text-xs">{selectedItem.uniqueWordCount} Words</div>
-                            </div>
-                            <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between">
-                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Diversity Index</div>
-                                <div className="font-black text-white uppercase text-xs">{(selectedItem.lexicalDiversity || 0).toFixed(1)}%</div>
-                            </div>
-                            <button
-                                onClick={() => selectedItem.audioUrl ? window.open(selectedItem.audioUrl, '_blank') : alert("Linguistic playback is unavailable.")}
-                                className={`w-full py-4 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 transition-all ${selectedItem.audioUrl ? 'bg-red-600 text-white shadow-xl shadow-red-600/30' : 'bg-white/5 text-gray-600 border border-white/5 opacity-50 cursor-not-allowed'}`}
-                                disabled={!selectedItem.audioUrl}
-                            >
-                                <Play size={18} fill="currentColor" /> {selectedItem.audioUrl ? 'Analyze Audio' : 'No Audio'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                Loading AI Discussions...
             </div>
         );
     }
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div>
-                <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">AI Discussions</h1>
-                <p className="text-gray-500 font-medium text-sm md:text-base">Historical logs of your cognitive interactions with the AI Core.</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">AI Discussions</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">All your conversations and voice sessions with AI</p>
+                </div>
+                <NavLink to="/student-dashboard" className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-white/5">
+                    <ChevronRight className="rotate-180 inline mr-2" size={16} /> Back to Archives
+                </NavLink>
             </div>
 
-            <div className="glass-card rounded-[2.5rem] border border-white/5 overflow-hidden bg-black/40">
-                <table className="w-full">
-                    <thead className="bg-white/5 border-b border-white/5">
-                        <tr>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Node Type</th>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Dialogue Title</th>
-                            <th className="text-left p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Timestamp</th>
-                            <th className="text-right p-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Operation</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                        {history.length === 0 ? (
-                            <tr>
-                                <td colSpan="4" className="p-20 md:p-32 text-center">
-                                    <div className="flex flex-col items-center gap-4 text-gray-500">
-                                        <MessageSquare size={48} className="opacity-20" />
-                                        <span className="font-black uppercase tracking-widest text-xs">No conversations discovered</span>
-                                        <NavLink to="/lexilearn" className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-indigo-700">Initiate First Link</NavLink>
-                                    </div>
-                                </td>
-                            </tr>
-                        ) : (
-                            history.map((item) => (
-                                <tr key={item._id} className="hover:bg-white/[0.02] transition-colors group">
-                                    <td className="p-4 md:p-8">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.type === 'voice'
-                                            ? 'bg-red-600/10 text-red-500 border border-red-500/20'
-                                            : 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20'
+            {history.length === 0 ? (
+                <div className="glass-card p-20 text-center rounded-[3rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent">
+                    <MessageSquare size={64} className="mx-auto mb-6 text-gray-700" />
+                    <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">No Discussions Yet</h3>
+                    <p className="text-gray-500 font-medium max-w-md mx-auto leading-relaxed">Start a conversation with AI to see your discussion history here.</p>
+                    <NavLink to="/lexilearn" className="mt-8 inline-block px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] font-bold uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-indigo-600/20">Start AI Session</NavLink>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 gap-6">
+                    {history.map((item) => (
+                        <div key={item._id} className="glass-card p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-white/5 hover:border-red-500/40 transition-all group bg-gradient-to-br from-white/5 to-transparent">
+                            <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
+                                <div className="flex-1 space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-14 h-14 rounded-[1.25rem] flex items-center justify-center border ${
+                                                item.type === 'voice'
+                                                    ? 'bg-red-600/20 text-red-400 border-red-500/20'
+                                                    : 'bg-indigo-600/20 text-indigo-400 border-indigo-500/20'
                                             }`}>
-                                            {item.type === 'voice' ? <Mic size={18} /> : <MessageSquare size={18} />}
+                                                {item.type === 'voice' ? <Mic size={28} /> : <MessageSquare size={28} />}
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-black uppercase tracking-tight text-white group-hover:text-red-400 transition-colors">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">
+                                                    {new Date(item.displayDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </td>
-                                    <td className="p-4 md:p-8">
-                                        <div className="font-black text-sm uppercase tracking-tight text-white group-hover:text-indigo-400 transition-colors line-clamp-1">
-                                            {item.title}
+                                        <button
+                                            onClick={() => handleDelete(item)}
+                                            className="p-3 bg-white/5 hover:bg-rose-500/20 text-gray-600 hover:text-rose-500 rounded-2xl transition-all border border-white/5 hover:border-rose-500/20"
+                                            title="Delete Record"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                    </div>
+
+                                    {item.type === 'voice' && item.transcription && (
+                                        <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative">
+                                            <div className="absolute top-4 right-6 text-red-500/20 hidden md:block"><FileText size={32} /></div>
+                                            "{item.transcription}"
                                         </div>
-                                        <div className="text-[8px] font-black text-gray-500 uppercase tracking-widest mt-1">
-                                            {item.type === 'voice' ? 'Sonic Transmission' : 'Linguistic Payload'}
+                                    )}
+
+                                    {item.type === 'text' && item.messages && item.messages.length > 0 && (
+                                        <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 border border-white/5 text-gray-400 text-sm leading-relaxed">
+                                            <div className="text-[8px] font-black uppercase tracking-widest mb-2 text-gray-600">Last Message:</div>
+                                            {item.messages[item.messages.length - 1]?.content?.substring(0, 150)}{item.messages[item.messages.length - 1]?.content?.length > 150 ? '...' : ''}
                                         </div>
-                                    </td>
-                                    <td className="p-8 text-xs font-medium text-gray-400">
-                                        {new Date(item.displayDate).toLocaleDateString(undefined, { dateStyle: 'long' })}
-                                        <div className="text-[8px] font-black text-gray-600 uppercase tracking-widest mt-1">
-                                            {new Date(item.displayDate).toLocaleTimeString(undefined, { timeStyle: 'short' })}
+                                    )}
+
+                                    {item.type === 'voice' && item.advancedWords && item.advancedWords.length > 0 && (
+                                        <div className="flex flex-wrap gap-2">
+                                            {item.advancedWords.slice(0, 5).map((word, i) => (
+                                                <span key={i} className="px-4 py-1.5 bg-red-500/10 rounded-full text-[10px] text-red-300 font-black uppercase tracking-widest border border-red-500/10">
+                                                    {word}
+                                                </span>
+                                            ))}
                                         </div>
-                                    </td>
-                                    <td className="p-8 text-right">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <button
-                                                onClick={() => handleViewDetail(item)}
-                                                className="px-6 py-2.5 bg-white/5 hover:bg-indigo-600/20 text-white hover:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 hover:border-indigo-500/20 transition-all active:scale-95"
-                                            >
-                                                Review Log
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(item)}
-                                                className="p-2.5 bg-white/5 hover:bg-rose-500/20 text-gray-600 hover:text-rose-500 rounded-lg border border-white/5 hover:border-rose-500/20 transition-all"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                    )}
+                                </div>
+
+                                <div className="lg:w-80 space-y-4">
+                                    {item.type === 'voice' && (
+                                        <>
+                                            <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 text-center">
+                                                <div className="text-4xl font-black text-emerald-400 tracking-tight leading-normal py-1">
+                                                    {(item.lexicalSophistication || 0).toFixed(0)}%
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">Sophistication</div>
+                                            </div>
+                                            <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between">
+                                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Unique Lexicon</div>
+                                                <div className="font-black text-white uppercase text-xs">{item.uniqueWordCount || 0} Words</div>
+                                            </div>
+                                            <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between">
+                                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Diversity Index</div>
+                                                <div className="font-black text-white uppercase text-xs">{(item.lexicalDiversity || 0).toFixed(1)}%</div>
+                                            </div>
+                                        </>
+                                    )}
+                                    {item.type === 'text' && (
+                                        <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between">
+                                            <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Messages</div>
+                                            <div className="font-black text-white uppercase text-xs">{item.messages?.length || 0} Total</div>
                                         </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    )}
+                                    <button
+                                        onClick={() => item.type === 'voice' ? handleAnalyzeAudio(item.audioUrl) : window.location.href = `/lexilearn?conversation=${item._id}`}
+                                        className={`w-full py-4 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 transition-all ${
+                                            item.type === 'voice'
+                                                ? (item.audioUrl ? 'bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-600/30' : 'bg-white/5 text-gray-600 border border-white/5 opacity-50 cursor-not-allowed')
+                                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/30'
+                                        }`}
+                                        disabled={item.type === 'voice' && !item.audioUrl}
+                                    >
+                                        <Play size={18} fill="currentColor" />
+                                        {item.type === 'voice' ? (item.audioUrl ? 'Analyze Audio' : 'No Audio') : 'View Chat'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
