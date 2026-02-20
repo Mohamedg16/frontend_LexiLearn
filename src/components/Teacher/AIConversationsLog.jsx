@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Search, MessageSquare, User, Calendar, X, Eye, ChevronRight, Mic, Download, FileText } from 'lucide-react';
 import dayjs from 'dayjs';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 
 const AIConversationsLog = () => {
     const [conversations, setConversations] = useState([]);
@@ -29,44 +30,55 @@ const AIConversationsLog = () => {
     };
 
     const exportLogsToPDF = () => {
-        console.log("Downloading PDF...");
-        const doc = new jsPDF();
+        if (!filteredConversations || filteredConversations.length === 0) {
+            alert("No interaction logs available to export.");
+            return;
+        }
 
-        // Header
-        doc.setFontSize(22);
-        doc.setTextColor(63, 81, 181); // Indigo
-        doc.text('LexiLearn: AI Interaction Summary Report', 14, 22);
+        try {
+            const doc = new jsPDF();
+            const timestamp = dayjs().format('YYYY-MM-DD_HHmm');
 
-        doc.setFontSize(10);
-        doc.setTextColor(100);
-        doc.text(`Report Generated: ${new Date().toLocaleString()}`, 14, 30);
-        doc.text(`Total Sessions: ${filteredConversations.length}`, 14, 35);
+            // Header
+            doc.setFontSize(22);
+            doc.setTextColor(63, 81, 181); // Indigo
+            doc.text('LexiLearn: AI Interaction Summary Report', 14, 22);
 
-        // Table
-        const tableColumn = ["Student ID", "Student Name", "Topic", "Type", "Messages", "Last Active"];
-        const tableRows = filteredConversations.map(conv => [
-            conv.student?._id?.substring(0, 8) || 'N/A',
-            conv.student?.userId?.name || conv.student?.userId?.fullName || 'Unknown',
-            conv.title || 'Untitled',
-            conv.type === 'voice' ? 'Voice' : 'Chat',
-            conv.messageCount || 0,
-            dayjs(conv.date).format('MMM D, HH:mm')
-        ]);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Report Generated: ${new Date().toLocaleString()}`, 14, 30);
+            doc.text(`Total Sessions: ${filteredConversations.length}`, 14, 35);
 
-        doc.autoTable({
-            startY: 45,
-            head: [tableColumn],
-            body: tableRows,
-            theme: 'grid',
-            headStyles: { fillStyle: [63, 81, 181] },
-            styles: { fontSize: 8 }
-        });
+            // Table
+            const tableColumn = ["Student ID", "Student Name", "Topic", "Type", "Messages", "Last Active"];
+            const tableRows = filteredConversations.map(conv => [
+                conv.student?._id?.substring(0, 8) || 'N/A',
+                conv.student?.userId?.fullName || conv.student?.userId?.name || 'Unknown',
+                conv.title || 'Untitled',
+                conv.type === 'voice' ? 'Voice' : 'Chat',
+                conv.messageCount || 0,
+                dayjs(conv.date).format('MMM D, HH:mm')
+            ]);
 
-        doc.save(`AI_Interactions_Report_${dayjs().format('YYYY-MM-DD')}.pdf`);
+            autoTable(doc, {
+                startY: 45,
+                head: [tableColumn],
+                body: tableRows,
+                theme: 'grid',
+                headStyles: { fillColor: [63, 81, 181] },
+                styles: { fontSize: 8 }
+            });
+
+            doc.save(`AI_Interactions_Report_${timestamp}.pdf`);
+        } catch (error) {
+            console.error("PDF Export Error:", error);
+            alert("Failed to generate PDF. Please try again or check console for details.");
+        }
     };
 
     const filteredConversations = conversations.filter(conv =>
-        conv.studentId?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        conv.student?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        conv.student?.userId?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         conv.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

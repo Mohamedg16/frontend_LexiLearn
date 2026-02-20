@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Mic, Calendar, User, BarChart2, FileText, ChevronRight, Activity, Percent, Layers, MessageSquare, Download, Sparkles } from 'lucide-react';
 import api from '../../services/api';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 
 const SpeechAssessments = () => {
     const [assessments, setAssessments] = useState([]);
@@ -52,102 +53,107 @@ const SpeechAssessments = () => {
     const generateCandidatePDF = () => {
         if (!selectedDetail) return;
         console.log("Downloading PDF...");
+        try {
+            const doc = new jsPDF();
+            const studentName = selectedDetail.studentId?.userId?.fullName || 'Unknown';
+            const studentEmail = selectedDetail.studentId?.userId?.email || 'N/A';
+            const topic = selectedDetail.topic || 'General Practice';
+            const date = new Date(selectedDetail.createdAt).toLocaleString();
 
-        const doc = new jsPDF();
-        const studentName = selectedDetail.studentId?.userId?.fullName || 'Unknown';
-        const studentEmail = selectedDetail.studentId?.userId?.email || 'N/A';
-        const topic = selectedDetail.topic || 'General Practice';
-        const date = new Date(selectedDetail.createdAt).toLocaleString();
+            // Header (Clean/White Background)
+            doc.setFontSize(22);
+            doc.setTextColor(63, 81, 181); // Indigo
+            doc.text('LexiLearn: Candidate Performance Report', 14, 22);
 
-        // Header (Clean/White Background)
-        doc.setFontSize(22);
-        doc.setTextColor(63, 81, 181); // Indigo
-        doc.text('LexiLearn: Candidate Performance Report', 14, 22);
-
-        doc.setFontSize(10);
-        doc.setTextColor(100);
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-
-        // Candidate Profile
-        doc.setFontSize(14);
-        doc.setTextColor(0);
-        doc.text('1. Candidate Profile:', 14, 45);
-        doc.setFontSize(11);
-        doc.text(`Name: ${studentName}`, 14, 52);
-        doc.text(`Email: ${studentEmail}`, 14, 59);
-        doc.text(`Session Topic: ${topic}`, 14, 66);
-        doc.text(`Date of Submission: ${date}`, 14, 73);
-
-        // Lexical Stats
-        doc.setFontSize(14);
-        doc.text('2. Linguistic Performance Metrics:', 14, 88);
-        const stats = [
-            ['Metric', 'Value'],
-            ['Lexical Diversity', (selectedDetail.lexicalDiversity || 0).toFixed(1)],
-            ['Lexical Sophistication', `${selectedDetail.lexicalSophistication || 0}%`],
-            ['Lexical Density', `${selectedDetail.lexicalDensity || 0}%`],
-            ['Word Count', selectedDetail.wordCount || 0]
-        ];
-        doc.autoTable({
-            startY: 93,
-            head: [stats[0]],
-            body: stats.slice(1),
-            theme: 'grid',
-            headStyles: { fillStyle: [63, 81, 181], textColor: [255, 255, 255] },
-            alternateRowStyles: { fillStyle: [245, 245, 250] }
-        });
-
-        // Transcript with Color Coding
-        doc.setFontSize(14);
-        doc.setTextColor(0);
-        doc.text('3. Full Annotated Transcript:', 14, doc.autoTable.previous.finalY + 15);
-
-        // If we have messages, we list them. If only highlightedTranscript (voice phase), we show it colored.
-        let startY = doc.autoTable.previous.finalY + 25;
-
-        if (selectedDetail.conversationId?.messages?.length > 0) {
-            selectedDetail.conversationId.messages.forEach((msg) => {
-                const role = msg.role === 'user' ? 'Student' : 'AI Tutor';
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(msg.role === 'user' ? 0 : 63, 81, 181);
-                doc.text(`${role}:`, 14, startY);
-
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(50);
-                const lines = doc.splitTextToSize(msg.content, 180);
-                doc.text(lines, 14, startY + 5);
-                startY += (lines.length * 5) + 10;
-
-                if (startY > 280) { doc.addPage(); startY = 20; }
-            });
-        } else if (selectedDetail.highlightedTranscript?.length > 0) {
-            // Draw colored words manually for the transcript
             doc.setFontSize(10);
-            let currentX = 14;
-            const maxX = 190;
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
 
-            selectedDetail.highlightedTranscript.forEach((item) => {
-                let color = [50, 50, 50]; // Default
-                if (item.type === 'academic') color = [63, 81, 181]; // Indigo
-                else if (item.type === 'filler' || item.type === 'repetitive') color = [225, 29, 72]; // Rose/Red
-                else if (item.type === 'advanced') color = [16, 185, 129]; // Emerald/Green
+            // Candidate Profile
+            doc.setFontSize(14);
+            doc.setTextColor(0);
+            doc.text('1. Candidate Profile:', 14, 45);
+            doc.setFontSize(11);
+            doc.text(`Name: ${studentName}`, 14, 52);
+            doc.text(`Email: ${studentEmail}`, 14, 59);
+            doc.text(`Session Topic: ${topic}`, 14, 66);
+            doc.text(`Date of Submission: ${date}`, 14, 73);
 
-                doc.setTextColor(color[0], color[1], color[2]);
-                const wordWidth = doc.getTextWidth(item.word + ' ');
-
-                if (currentX + wordWidth > maxX) {
-                    currentX = 14;
-                    startY += 6;
-                    if (startY > 280) { doc.addPage(); startY = 20; }
-                }
-
-                doc.text(item.word, currentX, startY);
-                currentX += wordWidth;
+            // Lexical Stats
+            doc.setFontSize(14);
+            doc.text('2. Linguistic Performance Metrics:', 14, 88);
+            const stats = [
+                ['Metric', 'Value'],
+                ['Lexical Diversity', (selectedDetail.lexicalDiversity || 0).toFixed(1)],
+                ['Lexical Sophistication', `${selectedDetail.lexicalSophistication || 0}%`],
+                ['Lexical Density', `${selectedDetail.lexicalDensity || 0}%`],
+                ['Word Count', selectedDetail.wordCount || 0]
+            ];
+            autoTable(doc, {
+                startY: 93,
+                head: [stats[0]],
+                body: stats.slice(1),
+                theme: 'grid',
+                headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255] },
+                alternateRowStyles: { fillColor: [245, 245, 250] }
             });
-        }
 
-        doc.save(`${studentName}_LexiLearn_Analysis.pdf`);
+            // Transcript with Color Coding
+            doc.setFontSize(14);
+            doc.setTextColor(0);
+            const finalY = doc.lastAutoTable?.finalY || 150;
+            doc.text('3. Full Annotated Transcript:', 14, finalY + 15);
+
+            // If we have messages, we list them. If only highlightedTranscript (voice phase), we show it colored.
+            let startY = finalY + 25;
+
+            if (selectedDetail.conversationId?.messages?.length > 0) {
+                selectedDetail.conversationId.messages.forEach((msg) => {
+                    const role = msg.role === 'user' ? 'Student' : 'AI Tutor';
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(msg.role === 'user' ? 0 : 63, 81, 181);
+                    doc.text(`${role}:`, 14, startY);
+
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(50);
+                    const lines = doc.splitTextToSize(msg.content, 180);
+                    doc.text(lines, 14, startY + 5);
+                    startY += (lines.length * 5) + 10;
+
+                    if (startY > 280) { doc.addPage(); startY = 20; }
+                });
+            } else if (selectedDetail.highlightedTranscript?.length > 0) {
+                // Draw colored words manually for the transcript
+                doc.setFontSize(10);
+                let currentX = 14;
+                const maxX = 190;
+
+                selectedDetail.highlightedTranscript.forEach((item) => {
+                    let color = [50, 50, 50]; // Default
+                    if (item.type === 'academic') color = [63, 81, 181]; // Indigo
+                    else if (item.type === 'filler' || item.type === 'repetitive') color = [225, 29, 72]; // Rose/Red
+                    else if (item.type === 'advanced') color = [16, 185, 129]; // Emerald/Green
+
+                    doc.setTextColor(color[0], color[1], color[2]);
+                    const wordWidth = doc.getTextWidth(item.word + ' ');
+
+                    if (currentX + wordWidth > maxX) {
+                        currentX = 14;
+                        startY += 6;
+                        if (startY > 280) { doc.addPage(); startY = 20; }
+                    }
+
+                    doc.text(item.word, currentX, startY);
+                    currentX += wordWidth;
+                });
+            }
+
+            doc.save(`${studentName}_LexiLearn_Analysis.pdf`);
+        } catch (error) {
+            console.error("PDF Export Error:", error);
+            alert("Failed to generate PDF: " + error.message);
+        }
     };
 
     const filteredAssessments = assessments.filter(ass =>
@@ -245,10 +251,14 @@ const SpeechAssessments = () => {
                                     <div className="font-mono text-sm mb-2">{new Date(selectedAssessment.createdAt).toLocaleString()}</div>
                                     <button
                                         onClick={generateCandidatePDF}
-                                        className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
+                                        disabled={!selectedDetail || detailLoading}
+                                        className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-lg ${!selectedDetail || detailLoading
+                                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/20 active:scale-95'
+                                            }`}
                                     >
                                         <Download size={14} />
-                                        Download Chat PDF
+                                        {detailLoading ? 'Preparing PDF...' : 'Download Chat PDF'}
                                     </button>
                                 </div>
                             </div>
