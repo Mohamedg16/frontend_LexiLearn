@@ -72,11 +72,8 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
 
     const playBackendAudio = (url) => {
         if (!url) return;
-        const fullUrl = (url.startsWith('http') || url.startsWith('data:')) ? url : `${api.defaults.baseURL.replace('/api', '')}${url}`;
-        console.log("🔊 Playing AI Voice:", fullUrl);
-        const audio = new Audio();
-        audio.crossOrigin = "anonymous";
-        audio.src = fullUrl;
+        console.log("🔊 Playing AI Voice:", url.substring(0, 50) + '...');
+        const audio = new Audio(url);
 
         audio.onplay = () => setIsSpeaking(true);
         audio.onended = () => setIsSpeaking(false);
@@ -569,10 +566,10 @@ const AnalyticsReflection = ({ analysis, transcription, audioUrl, suggestedWords
                             {audioUrl && (
                                 <div className="flex items-center gap-3">
                                     <Mic size={14} className="text-emerald-500 animate-pulse" />
-                                    <audio controls crossOrigin="anonymous" className="h-8 max-w-[200px] md:max-w-xs custom-audio-mini opacity-60 hover:opacity-100 transition-opacity">
+                                    <audio controls className="h-8 max-w-[200px] md:max-w-xs custom-audio-mini opacity-60 hover:opacity-100 transition-opacity">
                                         <source
-                                            src={audioUrl.startsWith('http') ? audioUrl : `${api.defaults.baseURL.replace('/api', '')}${audioUrl}`}
-                                            type="audio/webm"
+                                            src={audioUrl}
+                                            type="audio/mpeg"
                                         />
                                     </audio>
                                 </div>

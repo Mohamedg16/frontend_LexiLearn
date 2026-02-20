@@ -156,7 +156,7 @@ const AIChatHistory = () => {
                                                         {msg.audioUrl && (
                                                             <div className="mt-3 pt-3 border-t border-white/10">
                                                                 <audio controls className="w-full h-8">
-                                                                    <source src={msg.audioUrl} type="audio/webm" />
+                                                                    <source src={msg.audioUrl} type="audio/mpeg" />
                                                                 </audio>
                                                             </div>
                                                         )}
@@ -190,7 +190,7 @@ const AIChatHistory = () => {
                                                         {msg.audioUrl && (
                                                             <div className="mt-3 pt-3 border-t border-white/10">
                                                                 <audio controls className="w-full h-8">
-                                                                    <source src={msg.audioUrl} type="audio/webm" />
+                                                                    <source src={msg.audioUrl} type="audio/mpeg" />
                                                                 </audio>
                                                             </div>
                                                         )}
@@ -242,14 +242,14 @@ const AIChatHistory = () => {
                                     </div>
                                 )}
 
-                                {selectedItem.type === 'voice' && selectedItem.audioUrl && (
+                                {selectedItem.type === 'voice' && (selectedItem.audioUrl || selectedItem.audioBase64) && (
                                     <div className="pt-6 border-t border-white/5">
                                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
                                             <Play size={14} className="text-emerald-500" />
                                             Voice Recording
                                         </div>
                                         <audio controls className="w-full h-10 rounded-lg">
-                                            <source src={selectedItem.audioUrl} type="audio/webm" />
+                                            <source src={selectedItem.audioBase64 ? `data:audio/webm;base64,${selectedItem.audioBase64}` : selectedItem.audioUrl} type="audio/webm" />
                                             Your browser does not support the audio element.
                                         </audio>
                                     </div>

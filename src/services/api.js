@@ -78,8 +78,7 @@ api.interceptors.response.use(
 
                 return new Promise((resolve, reject) => {
                     console.log('🔄 Session expired. Attempting token regeneration...');
-                    const baseURL = getBaseURL();
-                    axios.post(`${baseURL}/auth/refresh-token`, {}, { withCredentials: true })
+                    api.post('/auth/refresh-token', {}, { withCredentials: true })
                         .then((res) => {
                             if (res.data.success) {
                                 const { accessToken } = res.data.data;
