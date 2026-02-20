@@ -72,6 +72,7 @@ const AIConversationsLog = () => {
                                 <th className="p-6 text-[10px] uppercase tracking-widest text-gray-400 font-black">Topic</th>
                                 <th className="p-6 text-[10px] uppercase tracking-widest text-gray-400 font-black">Messages</th>
                                 <th className="p-6 text-[10px] uppercase tracking-widest text-gray-400 font-black">Last Active</th>
+                                <th className="p-6 text-[10px] uppercase tracking-widest text-gray-400 font-black">AI Feedback</th>
                                 <th className="p-6 text-[10px] uppercase tracking-widest text-gray-400 font-black text-right">Action</th>
                             </tr>
                         </thead>
@@ -99,11 +100,28 @@ const AIConversationsLog = () => {
                                         <td className="p-6">
                                             <div className="flex items-center gap-2 text-gray-400">
                                                 <MessageSquare size={14} />
-                                                <span className="font-bold text-sm">{conv.messages?.length || 0}</span>
+                                                <span className="font-bold text-sm">{conv.messageCount || 0}</span>
                                             </div>
                                         </td>
                                         <td className="p-6 text-sm text-gray-400 font-mono">
-                                            {dayjs(conv.updatedAt).format('MMM D, HH:mm')}
+                                            {dayjs(conv.date).format('MMM D, HH:mm')}
+                                        </td>
+                                        <td className="p-6">
+                                            <div className="max-w-xs">
+                                                {conv.ai_feedback && conv.ai_feedback.length > 60 ? (
+                                                    <div className="flex flex-col items-start gap-1">
+                                                        <span className="text-xs text-gray-400 line-clamp-2">{conv.ai_feedback}</span>
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); openModal(conv); }}
+                                                            className="text-[10px] uppercase tracking-wider font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+                                                        >
+                                                            View Full Report
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs text-gray-300">{conv.ai_feedback || 'No Feedback'}</span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="p-6 text-right">
                                             <button
