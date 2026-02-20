@@ -24,6 +24,9 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [error, setError] = useState(null);
+    const [conversationId, setConversationId] = useState(null);
+    const [isFinalizing, setIsFinalizing] = useState(false);
+
     const scrollRef = useRef(null);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
@@ -33,14 +36,33 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
             setTimeLeft(prev => {
                 if (prev <= 0) {
                     clearInterval(timer);
-                    onComplete(messages);
+                    finalizeSession();
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [messages]);
+    }, [conversationId, messages]);
+
+    const finalizeSession = async () => {
+        if (isFinalizing) return;
+        setIsFinalizing(true);
+        setLoading(true);
+        try {
+            await api.post('/lexilearn/finalize', {
+                conversationId,
+                history: messages
+            });
+            onComplete(messages);
+        } catch (err) {
+            console.error("Finalization Error:", err);
+            onComplete(messages); // Continue anyway
+        } finally {
+            setLoading(false);
+            setIsFinalizing(false);
+        }
+    };
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -70,7 +92,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
 
     const handleSend = async (overrideMsg = null) => {
         const textToSend = overrideMsg || input;
-        if (!textToSend.trim() || loading) return;
+        if (!textToSend.trim() || loading || isFinalizing) return;
 
         const userMsg = { role: 'user', content: textToSend };
         setMessages(prev => [...prev, userMsg]);
@@ -82,10 +104,13 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
             const res = await api.post('/lexilearn/tutor', {
                 message: textToSend,
                 topic,
-                history: messages
+                history: messages,
+                conversationId
             });
             if (res.data.success) {
-                const { response: aiResponse, audioUrl } = res.data.data;
+                const { response: aiResponse, audioUrl, conversationId: newId } = res.data.data;
+                if (newId) setConversationId(newId);
+
                 setMessages(prev => [...prev, {
                     role: 'assistant',
                     content: aiResponse,
@@ -103,6 +128,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     };
 
     const startRecording = async () => {
+        if (isFinalizing) return;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderRef.current = new MediaRecorder(stream);
@@ -153,13 +179,16 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
         formData.append('audio', blob, 'vocal.webm');
         formData.append('topic', topic);
         formData.append('history', JSON.stringify(messages));
+        if (conversationId) formData.append('conversationId', conversationId);
 
         try {
             const res = await api.post('/lexilearn/tutor-vocal', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (res.data.success) {
-                const { userText, response, audioUrl } = res.data.data;
+                const { userText, response, audioUrl, conversationId: newId } = res.data.data;
+                if (newId) setConversationId(newId);
+
                 setMessages(prev => [
                     ...prev,
                     { role: 'user', content: userText, isVoice: true },
@@ -198,7 +227,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             <div className="flex items-center gap-2">
                                 <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-emerald-500 animate-pulse' : 'bg-gray-500'}`} />
                                 <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-                                    {isSpeaking ? 'AI is speaking...' : 'Socratic Mode Active'}
+                                    {isFinalizing ? 'Finalizing Evaluation...' : isSpeaking ? 'AI is speaking...' : 'Socratic Mode Active'}
                                 </p>
                             </div>
                         </div>
@@ -251,7 +280,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             </div>
                         </motion.div>
                     ))}
-                    {loading && (
+                    {(loading || isFinalizing) && (
                         <div className="flex justify-start">
                             <div className="bg-white/5 p-4 rounded-2xl flex gap-1 items-center">
                                 <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
@@ -283,20 +312,22 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                placeholder="Message your tutor..."
-                                className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500 transition-all text-white placeholder-gray-500"
+                                placeholder={isFinalizing ? "Generating final report..." : "Message your tutor..."}
+                                disabled={loading || isFinalizing}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500 transition-all text-white placeholder-gray-500 disabled:opacity-50"
                             />
                             <div className="flex gap-2">
                                 <button
                                     onClick={startRecording}
                                     title="Speak to AI"
-                                    className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-4 rounded-2xl transition-all border border-white/10"
+                                    disabled={loading || isFinalizing}
+                                    className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-4 rounded-2xl transition-all border border-white/10 disabled:opacity-50"
                                 >
                                     <Mic size={24} />
                                 </button>
                                 <button
                                     onClick={() => handleSend()}
-                                    disabled={loading || !input.trim()}
+                                    disabled={loading || !input.trim() || isFinalizing}
                                     className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white p-4 rounded-2xl transition-all shadow-lg shadow-indigo-500/30"
                                 >
                                     <Send size={24} />
@@ -308,10 +339,11 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 </div>
 
                 <button
-                    onClick={() => onComplete(messages)}
-                    className="absolute top-6 right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold border border-emerald-500/30 transition-all flex items-center gap-2"
+                    onClick={finalizeSession}
+                    disabled={loading || isFinalizing}
+                    className="absolute top-6 right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold border border-emerald-500/30 transition-all flex items-center gap-2 disabled:opacity-50"
                 >
-                    I'm Ready <ChevronRight size={16} />
+                    {isFinalizing ? 'Finalizing...' : "I'm Ready"} <ChevronRight size={16} />
                 </button>
             </div>
 

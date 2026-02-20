@@ -191,6 +191,20 @@ const AIConversationsLog = () => {
                                     </div>
                                 ))
                             ) : (
+                                <div></div>
+                            )}
+
+                            {/* Show Final Report for Chat sessions */}
+                            {selectedConversation.type === 'chat' && selectedConversation.details.finalReport && (
+                                <div className="p-6 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 mt-4">
+                                    <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">AI Final Evaluation</h4>
+                                    <div className="text-gray-200 leading-relaxed text-sm whitespace-pre-wrap">
+                                        {selectedConversation.details.finalReport}
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedConversation.type === 'voice' && (
                                 <div className="space-y-6">
                                     <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
                                         <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2">
