@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Mic, Calendar, User, BarChart2, FileText, ChevronRight, Activity, Percent, Layers, MessageSquare } from 'lucide-react';
+import { Search, Mic, Calendar, User, BarChart2, FileText, ChevronRight, Activity, Percent, Layers, MessageSquare, Download, Sparkles } from 'lucide-react';
 import api from '../../services/api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
