@@ -145,6 +145,8 @@ const LinguisticJourney = () => {
 const AIChatHistory = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedConversation, setSelectedConversation] = useState(null);
+    const [viewMode, setViewMode] = useState('list');
 
     const fetchUnifiedHistory = async () => {
         try {
@@ -189,11 +191,68 @@ const AIChatHistory = () => {
         }
     };
 
+    const handleViewChat = async (item) => {
+        try {
+            const res = await api.get(`/ai-chat/conversations/${item._id}`);
+            if (res.data.success) {
+                setSelectedConversation(res.data.data);
+                setViewMode('chat-detail');
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Failed to load conversation.");
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-32 text-gray-500 uppercase font-black tracking-widest gap-4">
                 <Loader2 className="animate-spin" size={48} />
                 Loading AI Discussions...
+            </div>
+        );
+    }
+
+    if (viewMode === 'chat-detail' && selectedConversation) {
+        return (
+            <div className="space-y-6 animate-in fade-in duration-500">
+                <button
+                    onClick={() => setViewMode('list')}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px]"
+                >
+                    <ChevronRight className="rotate-180" size={16} /> Back to Discussions
+                </button>
+
+                <div className="glass-card rounded-[2rem] border border-white/5 overflow-hidden bg-black/40">
+                    <div className="p-6 md:p-8 border-b border-white/5 bg-indigo-600/10">
+                        <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-indigo-400">
+                            {selectedConversation.title}
+                        </h2>
+                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-2">
+                            Phase 1: Interactive Scaffolding (Chat History)
+                        </p>
+                    </div>
+                    <div className="p-6 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                        {selectedConversation.messages.map((msg, idx) => (
+                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[85%] rounded-2xl ${
+                                    msg.role === 'user'
+                                        ? 'bg-indigo-600/20 border border-indigo-500/30 p-4'
+                                        : 'bg-white/5 border border-white/5 p-6'
+                                }`}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-gray-500">
+                                            {msg.role === 'user' ? '👤 Student' : '🤖 AI Tutor'} • {new Date(selectedConversation.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    </div>
+                                    <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                        {msg.content}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -301,7 +360,7 @@ const AIChatHistory = () => {
                                         </div>
                                     )}
                                     <button
-                                        onClick={() => item.type === 'voice' ? handleAnalyzeAudio(item.audioUrl) : window.location.href = `/lexilearn?conversation=${item._id}`}
+                                        onClick={() => item.type === 'voice' ? handleAnalyzeAudio(item.audioUrl) : handleViewChat(item)}
                                         className={`w-full py-4 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 transition-all ${
                                             item.type === 'voice'
                                                 ? (item.audioUrl ? 'bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-600/30' : 'bg-white/5 text-gray-600 border border-white/5 opacity-50 cursor-not-allowed')
@@ -309,8 +368,8 @@ const AIChatHistory = () => {
                                         }`}
                                         disabled={item.type === 'voice' && !item.audioUrl}
                                     >
-                                        <Play size={18} fill="currentColor" />
-                                        {item.type === 'voice' ? (item.audioUrl ? 'Analyze Audio' : 'No Audio') : 'View Chat'}
+                                        {item.type === 'voice' ? <Play size={18} fill="currentColor" /> : <MessageSquare size={18} />}
+                                        {item.type === 'voice' ? (item.audioUrl ? 'Analyze Audio' : 'No Audio') : 'View Chat History'}
                                     </button>
                                 </div>
                             </div>
