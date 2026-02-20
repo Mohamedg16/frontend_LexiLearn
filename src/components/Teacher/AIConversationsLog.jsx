@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { Search, MessageSquare, User, Calendar, X, Eye, ChevronRight, Mic } from 'lucide-react';
+import { Search, MessageSquare, User, Calendar, X, Eye, ChevronRight, Mic, Download, FileText } from 'lucide-react';
 import dayjs from 'dayjs';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const AIConversationsLog = () => {
     const [conversations, setConversations] = useState([]);
@@ -26,6 +28,42 @@ const AIConversationsLog = () => {
         }
     };
 
+    const downloadBulkReport = () => {
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(22);
+        doc.setTextColor(63, 81, 181); // Indigo
+        doc.text('LexiLearn: AI Interaction Summary Report', 14, 22);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Report Generated: ${new Date().toLocaleString()}`, 14, 30);
+        doc.text(`Total Sessions: ${filteredConversations.length}`, 14, 35);
+
+        // Table
+        const tableColumn = ["Student ID", "Student Name", "Topic", "Type", "Messages", "Last Active"];
+        const tableRows = filteredConversations.map(conv => [
+            conv.student?._id?.substring(0, 8) || 'N/A',
+            conv.student?.userId?.name || conv.student?.userId?.fullName || 'Unknown',
+            conv.title || 'Untitled',
+            conv.type === 'voice' ? 'Voice' : 'Chat',
+            conv.messageCount || 0,
+            dayjs(conv.date).format('MMM D, HH:mm')
+        ]);
+
+        doc.autoTable({
+            startY: 45,
+            head: [tableColumn],
+            body: tableRows,
+            theme: 'grid',
+            headStyles: { fillStyle: [63, 81, 181] },
+            styles: { fontSize: 8 }
+        });
+
+        doc.save(`AI_Interactions_Report_${dayjs().format('YYYY-MM-DD')}.pdf`);
+    };
+
     const filteredConversations = conversations.filter(conv =>
         conv.studentId?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         conv.title?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,6 +86,13 @@ const AIConversationsLog = () => {
                     <h1 className="text-4xl font-black tracking-tight uppercase">AI Interaction Logs</h1>
                     <p className="text-gray-400 font-medium">Review student discussions with the AI Tutor.</p>
                 </div>
+                <button
+                    onClick={downloadBulkReport}
+                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-indigo-500/20 active:scale-95"
+                >
+                    <Download size={16} />
+                    Download Report (PDF)
+                </button>
             </div>
 
             {/* Search */}

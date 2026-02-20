@@ -54,10 +54,10 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 conversationId,
                 history: messages
             });
-            onComplete(messages);
+            onComplete(messages, conversationId);
         } catch (err) {
             console.error("Finalization Error:", err);
-            onComplete(messages); // Continue anyway
+            onComplete(messages, conversationId); // Continue anyway
         } finally {
             setLoading(false);
             setIsFinalizing(false);
@@ -680,10 +680,12 @@ const LexiLearn = () => {
     const [audioUrl, setAudioUrl] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [suggestedTier3Words, setSuggestedTier3Words] = useState([]);
+    const [currentConversationId, setCurrentConversationId] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handlePhase1Complete = (messages) => {
+    const handlePhase1Complete = (messages, convId) => {
         setChatHistory([]); // WIPE for anti-cheat
+        setCurrentConversationId(convId);
         setPhase(2);
     };
 
@@ -712,7 +714,8 @@ const LexiLearn = () => {
                         topic,
                         transcript: text,
                         metrics: autoAnalysis,
-                        audioUrl: audioUrl
+                        audioUrl: audioUrl,
+                        conversationId: currentConversationId
                     });
                 } else {
                     // Fallback to manual analysis call if auto-analysis missing
@@ -729,7 +732,8 @@ const LexiLearn = () => {
                             topic,
                             transcript: text,
                             metrics: results,
-                            audioUrl: audioUrl
+                            audioUrl: audioUrl,
+                            conversationId: currentConversationId
                         });
                     }
                 }

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Mic, Calendar, User, BarChart2, FileText, ChevronRight, Activity, Percent, Layers, MessageSquare } from 'lucide-react';
 import api from '../../services/api';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const SpeechAssessments = () => {
     const [assessments, setAssessments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [detailLoading, setDetailLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedAssessment, setSelectedAssessment] = useState(null);
+    const [selectedDetail, setSelectedDetail] = useState(null);
 
     useEffect(() => {
         const fetchAssessments = async () => {
@@ -24,6 +28,106 @@ const SpeechAssessments = () => {
 
         fetchAssessments();
     }, []);
+
+    useEffect(() => {
+        if (selectedAssessment) {
+            fetchAssessmentDetail(selectedAssessment._id);
+        }
+    }, [selectedAssessment]);
+
+    const fetchAssessmentDetail = async (id) => {
+        setDetailLoading(true);
+        try {
+            const response = await api.get(`/teachers/assessments/${id}`);
+            if (response.data.success) {
+                setSelectedDetail(response.data.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch assessment detail:', error);
+        } finally {
+            setDetailLoading(false);
+        }
+    };
+
+    const downloadChatPDF = () => {
+        if (!selectedDetail) return;
+
+        const doc = new jsPDF();
+        const studentName = selectedDetail.studentId?.userId?.fullName || 'Unknown';
+        const studentEmail = selectedDetail.studentId?.userId?.email || 'N/A';
+        const topic = selectedDetail.topic || 'General Practice';
+        const date = new Date(selectedDetail.createdAt).toLocaleString();
+
+        // Header
+        doc.setFontSize(22);
+        doc.setTextColor(63, 81, 181); // Indigo
+        doc.text('LexiLearn: Chat Assessment Report', 14, 22);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+
+        // Student Info
+        doc.setFontSize(14);
+        doc.setTextColor(0);
+        doc.text('Candidate Profile:', 14, 45);
+        doc.setFontSize(11);
+        doc.text(`Name: ${studentName}`, 14, 52);
+        doc.text(`Email: ${studentEmail}`, 14, 59);
+        doc.text(`Session Topic: ${topic}`, 14, 66);
+        doc.text(`Date of Submission: ${date}`, 14, 73);
+
+        // Lexical Stats
+        doc.setFontSize(14);
+        doc.text('Linguistic Metrics:', 14, 88);
+        const stats = [
+            ['Metric', 'Value'],
+            ['Lexical Diversity', (selectedDetail.lexicalDiversity || 0).toFixed(1)],
+            ['Lexical Sophistication', `${selectedDetail.lexicalSophistication || 0}%`],
+            ['Lexical Density', `${selectedDetail.lexicalDensity || 0}%`],
+            ['Word Count', selectedDetail.wordCount || 0]
+        ];
+        doc.autoTable({
+            startY: 93,
+            head: [stats[0]],
+            body: stats.slice(1),
+            theme: 'striped',
+            headStyles: { fillStyle: [63, 81, 181] }
+        });
+
+        // Transcript
+        doc.setFontSize(14);
+        doc.text('Full Chat History:', 14, doc.autoTable.previous.finalY + 15);
+
+        let startY = doc.autoTable.previous.finalY + 22;
+        const messages = selectedDetail.conversationId?.messages || [
+            { role: 'user', content: selectedDetail.transcription, timestamp: selectedDetail.createdAt }
+        ];
+
+        messages.forEach((msg) => {
+            const role = msg.role === 'user' ? 'Student' : 'AI Tutor';
+            const timestamp = new Date(msg.timestamp).toLocaleTimeString();
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(msg.role === 'user' ? 0 : 63);
+            doc.text(`${role} (${timestamp}):`, 14, startY);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(50);
+            const lines = doc.splitTextToSize(msg.content, 180);
+            doc.text(lines, 14, startY + 5);
+
+            startY += (lines.length * 5) + 12;
+
+            if (startY > 270) {
+                doc.addPage();
+                startY = 20;
+            }
+        });
+
+        doc.save(`${studentName}_LexiLearn_Report.pdf`);
+    };
 
     const filteredAssessments = assessments.filter(ass =>
         ass.studentId?.userId?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -115,9 +219,16 @@ const SpeechAssessments = () => {
                                         <p className="text-xs text-gray-400">{selectedAssessment.studentId?.userId?.email}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Submitted On</div>
-                                    <div className="font-mono text-sm">{new Date(selectedAssessment.createdAt).toLocaleString()}</div>
+                                <div className="text-right flex flex-col items-end gap-2">
+                                    <div className="text-[10px] text-gray-400 uppercase tracking-wider">Submitted On</div>
+                                    <div className="font-mono text-sm mb-2">{new Date(selectedAssessment.createdAt).toLocaleString()}</div>
+                                    <button
+                                        onClick={downloadChatPDF}
+                                        className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
+                                    >
+                                        <Download size={14} />
+                                        Download Chat PDF
+                                    </button>
                                 </div>
                             </div>
 
@@ -154,8 +265,27 @@ const SpeechAssessments = () => {
                                             <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div> Advanced</span>
                                         </div>
                                     </div>
-                                    <div className="p-6 bg-black/40 text-gray-300 leading-loose text-sm max-h-[300px] overflow-y-auto font-medium">
-                                        {selectedAssessment.highlightedTranscript && selectedAssessment.highlightedTranscript.length > 0 ? (
+                                    <div className="p-6 bg-black/40 text-gray-300 leading-loose text-sm max-h-[400px] overflow-y-auto font-medium">
+                                        {detailLoading ? (
+                                            <div className="flex flex-col items-center justify-center py-10 gap-3">
+                                                <div className="w-6 h-6 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                                                <div className="text-[10px] uppercase tracking-widest text-gray-500">Retrieving Full History...</div>
+                                            </div>
+                                        ) : selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 ? (
+                                            <div className="space-y-6">
+                                                {selectedDetail.conversationId.messages.map((msg, idx) => (
+                                                    <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                                        <div className={`max-w-[90%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600/10 border border-indigo-500/20 text-indigo-100' : 'bg-white/5 border border-white/5 text-gray-300'}`}>
+                                                            <div className="text-[9px] uppercase font-black mb-1.5 opacity-40 flex items-center gap-2">
+                                                                {msg.role === 'user' ? <User size={10} /> : <Sparkles size={10} />}
+                                                                {msg.role === 'user' ? 'Student' : 'AI Tutor'} • {new Date(msg.timestamp).toLocaleTimeString()}
+                                                            </div>
+                                                            <div className="text-sm leading-relaxed">{msg.content}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : selectedAssessment.highlightedTranscript && selectedAssessment.highlightedTranscript.length > 0 ? (
                                             <div>
                                                 {selectedAssessment.highlightedTranscript.map((w, i) => (
                                                     <span
