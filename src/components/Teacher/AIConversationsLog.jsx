@@ -264,9 +264,36 @@ const AIConversationsLog = () => {
 
                             {selectedConversation.type === 'voice' && (
                                 <div className="space-y-6">
+                                    {/* Phase 1: Scaffolding Chat if available */}
+                                    {selectedConversation.details.conversationId?.messages && selectedConversation.details.conversationId.messages.length > 0 && (
+                                        <div className="p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4 flex items-center gap-2">
+                                                <MessageSquare size={14} /> Phase 1: Interactive Scaffolding
+                                            </h4>
+                                            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                                                {selectedConversation.details.conversationId.messages.map((msg, idx) => (
+                                                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                                        <div className={`max-w-[85%] p-3 rounded-xl text-xs ${msg.role === 'user' ? 'bg-indigo-600/20 text-indigo-100 border border-indigo-500/20' : 'bg-white/5 text-gray-300 border border-white/5'}`}>
+                                                            <div className="text-[8px] uppercase font-black mb-1 opacity-40">{msg.role === 'user' ? 'Student' : 'AI Tutor'}</div>
+                                                            <div>{msg.content}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {selectedConversation.details.conversationId.finalReport && (
+                                                <div className="mt-4 pt-4 border-t border-indigo-500/10">
+                                                    <div className="text-[9px] font-black uppercase text-indigo-400/60 mb-2 tracking-widest">Chat Final Report</div>
+                                                    <div className="text-xs text-indigo-200/70 whitespace-pre-wrap italic">
+                                                        {selectedConversation.details.conversationId.finalReport}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
                                     <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
                                         <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2">
-                                            <Mic size={14} /> Audio Recording
+                                            <Mic size={14} /> Phase 2: Independent Voice Recording
                                         </h4>
                                         {selectedConversation.details.audioUrl ? (
                                             <audio controls crossOrigin="anonymous" className="w-full h-12 custom-audio rounded-xl">
@@ -292,8 +319,8 @@ const AIConversationsLog = () => {
 
                                     {selectedConversation.details.advice && (
                                         <div className="p-6 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">AI Tutor Feedback</h4>
-                                            <div className="text-gray-300 leading-relaxed text-sm">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">AI Final Feedback</h4>
+                                            <div className="text-gray-300 leading-relaxed text-sm whitespace-pre-wrap">
                                                 {selectedConversation.details.advice}
                                             </div>
                                         </div>
