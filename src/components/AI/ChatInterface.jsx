@@ -100,24 +100,30 @@ const ChatInterface = () => {
         try {
             const res = await api.post('/ai-chat/send-vocal', formData);
             if (res.data.success) {
-                const { response, userText, conversationId: nextId } = res.data.data;
+                const { audioBase64, userText, conversationId: nextId } = res.data.data;
                 setConversationId(nextId);
 
-                // Add user "text" found by AssemblyAI
+                // Add user "text" found by Whisper
                 setMessages(prev => [...prev, {
                     role: 'user',
-                    content: userText,
+                    content: userText || "🎤 Voice Message",
                     timestamp: new Date().toISOString()
                 }]);
 
-                // Add AI response
+                // Add AI response placeholder (Text is hidden as per rules)
                 const assistantMsg = {
                     role: 'assistant',
-                    content: response,
-                    timestamp: new Date().toISOString()
+                    content: "🎤 Voice Response",
+                    timestamp: new Date().toISOString(),
+                    audio: audioBase64 // Store audio if needed later
                 };
                 setMessages(prev => [...prev, assistantMsg]);
-                speakText(response);
+
+                // Play Audio Automatically
+                if (audioBase64) {
+                    const audio = new Audio(audioBase64);
+                    audio.play().catch(e => console.error("Audio playback failed", e));
+                }
             }
         } catch (err) {
             console.error('Vocal Error:', err);
@@ -184,8 +190,7 @@ const ChatInterface = () => {
                 };
                 setMessages(prev => [...prev, assistantMsg]);
 
-                // Audio feedback
-                speakText(response);
+                // No audio feedback for text messages as per rules
             }
         } catch (err) {
             console.error('Study Assistant Error:', err);
@@ -274,7 +279,17 @@ const ChatInterface = () => {
                             <div className={`text-[10px] mt-2 opacity-60 flex items-center justify-between ${msg.role === 'user' ? 'text-indigo-200' : 'text-gray-400'}`}>
                                 <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 {msg.role === 'assistant' && (
-                                    <button onClick={() => speakText(msg.content)} className="ml-2 hover:text-white">
+                                    <button
+                                        onClick={() => {
+                                            if (msg.audio) {
+                                                new Audio(msg.audio).play();
+                                            } else {
+                                                speakText(msg.content);
+                                            }
+                                        }}
+                                        className="ml-2 hover:text-white"
+                                        title={msg.audio ? "Replay Voice" : "Read Aloud"}
+                                    >
                                         <Volume2 size={12} />
                                     </button>
                                 )}
