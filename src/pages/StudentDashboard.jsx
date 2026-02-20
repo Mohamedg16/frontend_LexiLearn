@@ -11,137 +11,6 @@ import api from '../services/api';
 
 // --- Student Sections ---
 
-const LinguisticJourney = () => {
-    const [history, setHistory] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchHistory = async () => {
-            try {
-                const res = await api.get('/students/speaking-history');
-                if (res.data.success) setHistory(res.data.data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchHistory();
-    }, []);
-
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to purge this linguistic record from the archives?")) return;
-        try {
-            const res = await api.delete(`/students/speaking-history/${id}`);
-            if (res.data.success) {
-                setHistory(prev => prev.filter(item => item._id !== id));
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Purge failed. The record remains in the neural core.");
-        }
-    };
-
-    return (
-        <div className="space-y-6 md:space-y-8 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight">Linguistic Journey</h1>
-                    <p className="text-gray-500 font-medium">Historical record of your AI-analyzed speech patterns.</p>
-                </div>
-                <div className="bg-indigo-600/10 text-indigo-400 px-6 py-3 rounded-2xl border border-indigo-500/10 flex items-center gap-2">
-                    <Sparkles size={18} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Research Archive</span>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-                {loading ? (
-                    <div className="text-center p-32 flex flex-col items-center gap-4 text-gray-500 uppercase font-black tracking-widest">
-                        <Loader2 className="animate-spin" size={48} />
-                        Accessing Voice Records...
-                    </div>
-                ) : history.length === 0 ? (
-                    <div className="glass-card p-20 text-center rounded-[3rem] border border-white/5 bg-gradient-to-br from-white/5 to-transparent">
-                        <Mic size={64} className="mx-auto mb-6 text-gray-700" />
-                        <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Sonic Silence</h3>
-                        <p className="text-gray-500 font-medium max-w-md mx-auto leading-relaxed">Initiate a speaking practice session to generate your first linguistic analysis report.</p>
-                        <NavLink to="/lexilearn" className="mt-8 inline-block px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] font-bold uppercase tracking-widest text-[10px] transition-all shadow-xl shadow-indigo-600/20">Begin AI Session</NavLink>
-                    </div>
-                ) : (
-                    history.map(item => (
-                        <div key={item._id} className="glass-card p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-white/5 hover:border-indigo-500/40 transition-all group bg-gradient-to-br from-white/5 to-transparent">
-                            <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
-                                <div className="flex-1 space-y-6">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 bg-indigo-600/20 rounded-[1.25rem] text-indigo-400 flex items-center justify-center border border-indigo-500/20">
-                                                <Mic size={28} />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-black uppercase tracking-tight text-white group-hover:text-indigo-400 transition-colors">{item.taskId?.title || item.topic || 'Practice Session'}</h3>
-                                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">{new Date(item.createdAt).toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' })}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
-                                                <div className="text-4xl font-black text-emerald-400 tracking-tight leading-normal py-1 overflow-visible">{(item.lexicalSophistication || 0).toFixed(0)}%</div>
-                                                <div className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">Sophistication</div>
-                                            </div>
-                                            <button
-                                                onClick={() => handleDelete(item._id)}
-                                                className="p-3 bg-white/5 hover:bg-rose-500/20 text-gray-600 hover:text-rose-500 rounded-2xl transition-all border border-white/5 hover:border-rose-500/20"
-                                                title="Delete Record"
-                                            >
-                                                <Trash2 size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-black/40 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-8 border border-white/5 italic text-gray-400 text-sm leading-relaxed relative group/text">
-                                        <div className="absolute top-4 right-6 text-indigo-500/20 hidden md:block"><FileText size={40} /></div>
-                                        "{item.transcription}"
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-2">
-                                        {item.advancedWords?.map((word, i) => (
-                                            <span key={i} className="px-4 py-1.5 bg-indigo-500/10 rounded-full text-[10px] text-indigo-300 font-black uppercase tracking-widest border border-indigo-500/10">
-                                                {word}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="lg:w-72 space-y-4">
-                                    <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
-                                        <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Unique Lexicon</div>
-                                        <div className="font-black text-white uppercase text-xs">{item.uniqueWordCount} Words</div>
-                                    </div>
-                                    <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
-                                        <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Diversity Index</div>
-                                        <div className="font-black text-white uppercase text-xs">{(item.lexicalDiversity || 0).toFixed(1)}%</div>
-                                    </div>
-                                    <div className="bg-white/5 rounded-[1.5rem] p-6 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
-                                        <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Density</div>
-                                        <div className="font-black text-white uppercase text-xs">{(item.lexicalDensity || 0).toFixed(1)}%</div>
-                                    </div>
-                                    <button
-                                        onClick={() => item.audioUrl ? window.open(item.audioUrl, '_blank') : alert("Linguistic playback is unavailable for this record.")}
-                                        className={`w-full py-4 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 transition-all ${item.audioUrl ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30' : 'bg-white/5 text-gray-600 border border-white/5 opacity-50 cursor-not-allowed'}`}
-                                        disabled={!item.audioUrl}
-                                    >
-                                        <Play size={18} fill="currentColor" /> {item.audioUrl ? 'Analyze Audio' : 'No Audio'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-        </div>
-    );
-};
-
 const AIChatHistory = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -284,6 +153,13 @@ const AIChatHistory = () => {
                                                             {msg.role === 'user' ? 'Student' : 'AI Tutor'} • {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : ''}
                                                         </div>
                                                         <div className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</div>
+                                                        {msg.audioUrl && (
+                                                            <div className="mt-3 pt-3 border-t border-white/10">
+                                                                <audio controls className="w-full h-8">
+                                                                    <source src={msg.audioUrl} type="audio/webm" />
+                                                                </audio>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
@@ -311,6 +187,13 @@ const AIChatHistory = () => {
                                                             {msg.role === 'user' ? 'Student' : 'AI Tutor'} • {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : ''}
                                                         </div>
                                                         <div className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</div>
+                                                        {msg.audioUrl && (
+                                                            <div className="mt-3 pt-3 border-t border-white/10">
+                                                                <audio controls className="w-full h-8">
+                                                                    <source src={msg.audioUrl} type="audio/webm" />
+                                                                </audio>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
@@ -894,7 +777,6 @@ const StudentDashboard = () => {
     const navItems = [
         { path: '', icon: Home, label: 'Core Node' },
         { path: 'ai-discussions', icon: MessageSquare, label: 'AI Discussions' },
-        { path: 'journey', icon: Mic, label: 'Voice Archive' },
         { path: 'assignments', icon: Target, label: 'Curriculum' },
         { path: 'academy', icon: History, label: 'Learning History' },
         { path: 'settings', icon: Settings, label: 'Identity' }
@@ -998,7 +880,6 @@ const StudentDashboard = () => {
                     <Routes>
                         <Route path="/" element={<DashboardHome currentUser={currentUser} dashboardData={dashboardData} />} />
                         <Route path="ai-discussions" element={<AIChatHistory />} />
-                        <Route path="journey" element={<LinguisticJourney />} />
                         <Route path="assignments" element={<MyAssignments />} />
                         <Route path="academy" element={<LearningHistory />} />
                         <Route path="settings" element={<Identity currentUser={currentUser} />} />
