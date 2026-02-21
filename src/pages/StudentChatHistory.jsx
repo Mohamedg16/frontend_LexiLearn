@@ -229,13 +229,8 @@ const StudentChatHistory = () => {
                                     <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
                                         <h4 className="font-bold flex items-center gap-2 text-sm">
                                             <MessageSquare size={16} className="text-cyan-400" />
-                                            Visual Feedback & Transcript
+                                            Interactive Scaffolding Chat History
                                         </h4>
-                                        <div className="flex gap-4 text-[10px]">
-                                            <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div> Academic</span>
-                                            <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-rose-400"></div> Repetitive</span>
-                                            <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div> Advanced</span>
-                                        </div>
                                     </div>
                                     <div className="p-6 bg-black/40 text-gray-300 leading-loose text-sm max-h-[600px] overflow-y-auto font-medium space-y-8">
                                         {detailLoading ? (
@@ -246,7 +241,7 @@ const StudentChatHistory = () => {
                                         ) : (
                                             <>
                                                 {/* Phase 1: Interactive Scaffolding */}
-                                                {selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 && (
+                                                {selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 ? (
                                                     <div className="space-y-6">
                                                         <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-indigo-400 flex items-center gap-2">
                                                             <MessageSquare size={12} />
@@ -275,48 +270,13 @@ const StudentChatHistory = () => {
                                                                 </div>
                                                             ))}
                                                         </div>
-                                                        <hr className="border-white/5 my-8" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-center py-10 text-gray-500">
+                                                        <MessageSquare size={48} className="mx-auto mb-4 opacity-20" />
+                                                        <p>No chat history available for this session</p>
                                                     </div>
                                                 )}
-
-                                                {/* Phase 2: Independent Performance */}
-                                                <div className="space-y-4">
-                                                    <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-emerald-400 flex items-center gap-2">
-                                                        <Mic size={12} />
-                                                        Phase 2: Independent Performance (Final Transcript)
-                                                    </h4>
-                                                    <div className="bg-black/40 rounded-xl p-6 border border-white/5">
-                                                        <div className="text-base leading-relaxed">
-                                                            {selectedSession.highlightedTranscript?.length > 0 ? (
-                                                                <div>
-                                                                    {selectedSession.highlightedTranscript.map((w, i) => (
-                                                                        <span
-                                                                            key={i}
-                                                                            className={`inline-block mr-1 px-1 rounded ${w.type === 'academic' ? 'bg-indigo-500/20 text-indigo-400' :
-                                                                                w.type === 'filler' || w.type === 'repetitive' ? 'bg-rose-500/20 text-rose-400' :
-                                                                                    w.type === 'advanced' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'text-gray-300'
-                                                                                }`}
-                                                                        >
-                                                                            {w.word}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            ) : (
-                                                                <div className="italic text-gray-400">"{selectedSession.transcription}"</div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    {selectedSession.advancedWords?.length > 0 && (
-                                                        <div className="flex flex-wrap gap-2 mt-4">
-                                                            {selectedSession.advancedWords.map((word, i) => (
-                                                                <span key={i} className="px-4 py-1.5 bg-emerald-500/10 rounded-full text-[10px] text-emerald-300 font-black uppercase tracking-widest border border-emerald-500/10">
-                                                                    {word}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
                                             </>
                                         )}
                                     </div>
