@@ -372,19 +372,19 @@ const SpeechAssessments = () => {
                                 {/* Audio Playback */}
                                 <div className="pt-6 border-t border-white/5">
                                     <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Mic size={14} className={(selectedAssessment.audioBase64 || selectedAssessment.audioUrl) ? "text-emerald-500" : "text-gray-600"} />
-                                        {(selectedAssessment.audioBase64 || selectedAssessment.audioUrl) ? "Voice Stream Active" : "Voice Stream Unavailable"}
+                                        <Mic size={14} className={((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? "text-emerald-500" : "text-gray-600"} />
+                                        {((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? "Voice Stream Active" : "Voice Stream Unavailable"}
                                     </div>
-                                    {(selectedAssessment.audioBase64 || selectedAssessment.audioUrl) ? (
+                                    {((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? (
                                         <audio 
                                             key={selectedAssessment._id}
                                             controls 
                                             className="w-full h-10 rounded-lg custom-audio"
                                         >
                                             <source
-                                                src={selectedAssessment.audioBase64 
-                                                    ? `data:audio/webm;base64,${selectedAssessment.audioBase64}` 
-                                                    : selectedAssessment.audioUrl}
+                                                src={(selectedDetail?.audioBase64 || selectedAssessment.audioBase64)
+                                                    ? `data:audio/webm;base64,${selectedDetail?.audioBase64 || selectedAssessment.audioBase64}` 
+                                                    : (selectedDetail?.audioUrl || selectedAssessment.audioUrl)}
                                                 type="audio/webm"
                                             />
                                             Your browser does not support the audio element.
