@@ -240,6 +240,16 @@ const StudentChatHistory = () => {
                                             </div>
                                         ) : (
                                             <>
+                                                {/* AI Conversational Tutor Badge */}
+                                                <div className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 rounded-xl">
+                                                    <Sparkles size={18} className="text-indigo-400" />
+                                                    <div className="text-center">
+                                                        <div className="text-sm font-black uppercase tracking-wider text-white">AI Conversational Tutor</div>
+                                                        <div className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Socratic Mode Active</div>
+                                                    </div>
+                                                    <Sparkles size={18} className="text-purple-400" />
+                                                </div>
+
                                                 {/* Phase 1: Interactive Scaffolding */}
                                                 {selectedDetail?.conversationId?.messages && selectedDetail.conversationId.messages.length > 0 ? (
                                                     <div className="space-y-6">
