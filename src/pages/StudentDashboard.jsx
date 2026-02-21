@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import StudentChatHistory from './StudentChatHistory';
 
 // --- Student Sections ---
 
@@ -777,6 +778,7 @@ const StudentDashboard = () => {
     const navItems = [
         { path: '', icon: Home, label: 'Core Node' },
         { path: 'ai-discussions', icon: MessageSquare, label: 'AI Discussions' },
+        { path: 'chat-history', icon: MessageSquare, label: 'My Conversations' },
         { path: 'assignments', icon: Target, label: 'Curriculum' },
         { path: 'academy', icon: History, label: 'Learning History' },
         { path: 'settings', icon: Settings, label: 'Identity' }
@@ -880,6 +882,7 @@ const StudentDashboard = () => {
                     <Routes>
                         <Route path="/" element={<DashboardHome currentUser={currentUser} dashboardData={dashboardData} />} />
                         <Route path="ai-discussions" element={<AIChatHistory />} />
+                        <Route path="chat-history" element={<StudentChatHistory />} />
                         <Route path="assignments" element={<MyAssignments />} />
                         <Route path="academy" element={<LearningHistory />} />
                         <Route path="settings" element={<Identity currentUser={currentUser} />} />
