@@ -375,20 +375,24 @@ const SpeechAssessments = () => {
                                         <Mic size={14} />
                                         Voice Recording
                                     </div>
-                                    {((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? (
+                                    {(selectedDetail?.audioBase64 || selectedDetail?.audioUrl) ? (
                                         <audio 
-                                            key={selectedAssessment._id}
+                                            key={selectedDetail._id}
                                             controls 
                                             className="w-full rounded-lg"
                                         >
                                             <source
-                                                src={(selectedDetail?.audioBase64 || selectedAssessment.audioBase64)
-                                                    ? `data:audio/webm;base64,${selectedDetail?.audioBase64 || selectedAssessment.audioBase64}` 
-                                                    : (selectedDetail?.audioUrl || selectedAssessment.audioUrl)}
+                                                src={selectedDetail.audioBase64
+                                                    ? `data:audio/webm;base64,${selectedDetail.audioBase64}` 
+                                                    : selectedDetail.audioUrl}
                                                 type="audio/webm"
                                             />
                                             Your browser does not support the audio element.
                                         </audio>
+                                    ) : detailLoading ? (
+                                        <div className="w-full h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">
+                                            Loading audio...
+                                        </div>
                                     ) : (
                                         <div className="w-full h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500 italic">
                                             No audio recording available
