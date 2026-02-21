@@ -369,17 +369,17 @@ const SpeechAssessments = () => {
                                     </div>
                                 </div>
 
-                                {/* Audio Playback */}
+                                {/* Voice Recording */}
                                 <div className="pt-6 border-t border-white/5">
-                                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Mic size={14} className={((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? "text-emerald-500" : "text-gray-600"} />
-                                        {((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? "Voice Stream Active" : "Voice Stream Unavailable"}
+                                    <div className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Mic size={14} />
+                                        Voice Recording
                                     </div>
                                     {((selectedDetail?.audioBase64 || selectedAssessment.audioBase64) || (selectedDetail?.audioUrl || selectedAssessment.audioUrl)) ? (
                                         <audio 
                                             key={selectedAssessment._id}
                                             controls 
-                                            className="w-full h-10 rounded-lg custom-audio"
+                                            className="w-full rounded-lg"
                                         >
                                             <source
                                                 src={(selectedDetail?.audioBase64 || selectedAssessment.audioBase64)
@@ -391,7 +391,7 @@ const SpeechAssessments = () => {
                                         </audio>
                                     ) : (
                                         <div className="w-full h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500 italic">
-                                            No audio recording available for this session.
+                                            No audio recording available
                                         </div>
                                     )}
                                 </div>

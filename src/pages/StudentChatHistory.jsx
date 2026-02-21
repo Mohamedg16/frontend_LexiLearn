@@ -292,14 +292,14 @@ const StudentChatHistory = () => {
                                     </div>
                                 </div>
 
-                                {/* Voice Stream Active */}
+                                {/* Voice Recording */}
                                 <div className="pt-6 border-t border-white/5">
-                                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Play size={14} className="text-emerald-500" />
-                                        Voice Stream Active
+                                    <div className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Play size={14} />
+                                        Voice Recording
                                     </div>
                                     {selectedSession.audioBase64 || selectedSession.audioUrl ? (
-                                        <audio controls className="w-full h-10 rounded-lg">
+                                        <audio key={selectedSession._id} controls className="w-full rounded-lg">
                                             <source 
                                                 src={selectedSession.audioBase64 
                                                     ? `data:audio/webm;base64,${selectedSession.audioBase64}` 
