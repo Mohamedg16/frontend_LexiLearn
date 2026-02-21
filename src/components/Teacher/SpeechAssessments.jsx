@@ -376,7 +376,11 @@ const SpeechAssessments = () => {
                                         {(selectedAssessment.audioBase64 || selectedAssessment.audioUrl) ? "Voice Stream Active" : "Voice Stream Unavailable"}
                                     </div>
                                     {(selectedAssessment.audioBase64 || selectedAssessment.audioUrl) ? (
-                                        <audio controls className="w-full h-10 rounded-lg custom-audio">
+                                        <audio 
+                                            key={selectedAssessment._id}
+                                            controls 
+                                            className="w-full h-10 rounded-lg custom-audio"
+                                        >
                                             <source
                                                 src={selectedAssessment.audioBase64 
                                                     ? `data:audio/webm;base64,${selectedAssessment.audioBase64}` 
