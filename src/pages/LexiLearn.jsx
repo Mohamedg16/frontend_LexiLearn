@@ -336,9 +336,20 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 <button
                     onClick={finalizeSession}
                     disabled={loading || isFinalizing}
-                    className="absolute top-4 right-4 md:top-6 md:right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold border border-emerald-500/30 transition-all flex items-center gap-2 disabled:opacity-50 z-10"
+                    className="hidden md:flex absolute top-4 right-4 md:top-6 md:right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold border border-emerald-500/30 transition-all items-center gap-2 disabled:opacity-50 z-10"
                 >
                     {isFinalizing ? 'Finalizing...' : "I'm Ready"} <ChevronRight size={14} />
+                </button>
+            </div>
+
+            {/* I'm Ready button for mobile - below chat */}
+            <div className="md:hidden p-3 bg-black/40 border-t border-white/5">
+                <button
+                    onClick={finalizeSession}
+                    disabled={loading || isFinalizing}
+                    className="w-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-4 py-3 rounded-xl text-sm font-bold border border-emerald-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                    {isFinalizing ? 'Finalizing...' : "I'm Ready"} <ChevronRight size={16} />
                 </button>
             </div>
 
