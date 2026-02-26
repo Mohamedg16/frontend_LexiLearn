@@ -211,26 +211,26 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)] lg:h-[calc(100vh-250px)] animate-slide-up">
-            <div className="flex-1 bg-[#0a0a0c]/60 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col relative border border-white/5 shadow-2xl">
+        <div className="flex flex-col gap-6 h-auto lg:h-[calc(100vh-250px)] animate-slide-up">
+            <div className="flex-1 bg-[#0a0a0c]/60 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col relative border border-white/5 shadow-2xl min-h-[500px]">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1a1a2e]/30">
+                <div className="p-4 md:p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#1a1a2e]/30">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-indigo-500/10 rounded-xl">
-                            <Brain className="text-indigo-400" size={24} />
+                            <Brain className="text-indigo-400" size={20} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-white text-lg">AI Conversational Tutor</h3>
+                            <h3 className="font-bold text-white text-base md:text-lg">AI Conversational Tutor</h3>
                             <div className="flex items-center gap-2">
                                 <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-emerald-500 animate-pulse' : 'bg-gray-500'}`} />
-                                <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-                                    {isFinalizing ? 'Finalizing Evaluation...' : isSpeaking ? 'AI is speaking...' : 'Socratic Mode Active'}
+                                <p className="text-[9px] md:text-[10px] text-gray-400 uppercase tracking-widest">
+                                    {isFinalizing ? 'Finalizing...' : isSpeaking ? 'AI speaking...' : 'Active'}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-mono text-xl font-bold ${timeLeft < 60 ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-indigo-500/10 text-indigo-200'}`}>
-                        <Clock size={20} />
+                    <div className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-2xl font-mono text-base md:text-xl font-bold ${timeLeft < 60 ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-indigo-500/10 text-indigo-200'}`}>
+                        <Clock size={16} />
                         {formatTime(timeLeft)}
                     </div>
                 </div>
@@ -338,14 +338,14 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 <button
                     onClick={finalizeSession}
                     disabled={loading || isFinalizing}
-                    className="absolute top-6 right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold border border-emerald-500/30 transition-all flex items-center gap-2 disabled:opacity-50"
+                    className="absolute top-4 right-4 md:top-6 md:right-32 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold border border-emerald-500/30 transition-all flex items-center gap-2 disabled:opacity-50 z-10"
                 >
-                    {isFinalizing ? 'Finalizing...' : "I'm Ready"} <ChevronRight size={16} />
+                    {isFinalizing ? 'Finalizing...' : "I'm Ready"} <ChevronRight size={14} />
                 </button>
             </div>
 
-            {/* Vocabulary Bank */}
-            <div className="w-full lg:w-80 glass rounded-3xl p-6 flex flex-col gap-6">
+            {/* Vocabulary Bank - Always visible on mobile */}
+            <div className="w-full glass rounded-3xl p-4 md:p-6 flex flex-col gap-4 md:gap-6">
                 <div className="flex items-center gap-2 text-indigo-400">
                     <Languages size={20} />
                     <h4 className="font-bold uppercase tracking-wider text-sm">Lexical Assets</h4>
