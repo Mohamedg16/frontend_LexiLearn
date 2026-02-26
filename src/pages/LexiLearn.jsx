@@ -236,11 +236,11 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 </div>
 
                 {/* Messages */}
-                <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth">
+                <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-6 space-y-3 md:space-y-4 scroll-smooth">
                     {messages.length === 0 && (
-                        <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-                            <Sparkles size={48} className="text-indigo-400 animate-pulse" />
-                            <p className="max-w-xs text-sm">Talk or type to your AI tutor. I'll help you organize thoughts and correct any mistakes!</p>
+                        <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50 px-4">
+                            <Sparkles size={40} className="text-indigo-400 animate-pulse" />
+                            <p className="max-w-xs text-xs md:text-sm">Talk or type to your AI tutor. I'll help you organize thoughts and correct any mistakes!</p>
                         </div>
                     )}
                     {messages.map((msg, i) => (
@@ -250,12 +250,12 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             key={i}
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div className={`max-w-[80%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/20 shadow-lg' : 'bg-[#161625] text-gray-200 border border-white/10 rounded-tl-none'}`}>
+                            <div className={`max-w-[85%] p-3 md:p-4 rounded-2xl ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/20 shadow-lg' : 'bg-[#161625] text-gray-200 border border-white/10 rounded-tl-none'}`}>
                                 <div className="flex justify-between items-start gap-3">
                                     <div className="flex-1">
-                                        <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                                        <p className="text-xs md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                                         {msg.isVoice && msg.role === 'user' && (
-                                            <div className="flex items-center gap-1 mt-2 text-[10px] opacity-60">
+                                            <div className="flex items-center gap-1 mt-2 text-[9px] opacity-60">
                                                 <Mic size={10} />
                                                 <span>Voice Message</span>
                                             </div>
@@ -265,10 +265,10 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                                             <div className="mt-2">
                                                 <button
                                                     onClick={() => playBackendAudio(msg.audioUrl)}
-                                                    className="flex items-center gap-2 text-xs bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-lg transition-colors border border-indigo-500/30"
+                                                    className="flex items-center gap-1.5 text-[10px] md:text-xs bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-2 md:px-3 py-1 md:py-1.5 rounded-lg transition-colors border border-indigo-500/30"
                                                 >
-                                                    <Volume2 size={14} />
-                                                    {isSpeaking ? 'Playing...' : 'Play Voice Answer'}
+                                                    <Volume2 size={12} />
+                                                    {isSpeaking ? 'Playing...' : 'Play'}
                                                 </button>
                                             </div>
                                         )}
@@ -279,7 +279,7 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                     ))}
                     {(loading || isFinalizing) && (
                         <div className="flex justify-start">
-                            <div className="bg-white/5 p-4 rounded-2xl flex gap-1 items-center">
+                            <div className="bg-white/5 p-3 rounded-2xl flex gap-1 items-center">
                                 <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                 <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                                 <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
@@ -289,50 +289,48 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 md:p-6 bg-black/40 border-t border-white/5">
+                <div className="p-3 md:p-6 bg-black/40 border-t border-white/5">
                     {isRecording ? (
-                        <div className="flex items-center justify-between bg-red-500/10 border border-red-500/20 p-4 rounded-2xl animate-pulse">
-                            <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-between bg-red-500/10 border border-red-500/20 p-3 rounded-2xl animate-pulse">
+                            <div className="flex items-center gap-2">
                                 <div className="flex gap-1">
-                                    {[1, 2, 3, 4].map(n => <div key={n} className="w-1 bg-red-400 rounded-full animate-grow" style={{ animationDelay: `${n * 0.1}s` }} />)}
+                                    {[1, 2, 3].map(n => <div key={n} className="w-1 h-3 bg-red-400 rounded-full animate-pulse" style={{ animationDelay: `${n * 0.1}s` }} />)}
                                 </div>
-                                <span className="text-red-400 font-bold text-sm uppercase">Recording Voice...</span>
+                                <span className="text-red-400 font-bold text-xs uppercase">Recording...</span>
                             </div>
-                            <button onClick={stopRecording} className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-red-500/40">
-                                Stop & Send
+                            <button onClick={stopRecording} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase shadow-lg">
+                                Stop
                             </button>
                         </div>
                     ) : (
-                        <div className="relative flex gap-3">
+                        <div className="relative flex gap-2">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                placeholder={isFinalizing ? "Generating final report..." : "Message your tutor..."}
+                                placeholder={isFinalizing ? "Generating..." : "Message..."}
                                 disabled={loading || isFinalizing}
-                                className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500 transition-all text-white placeholder-gray-500 disabled:opacity-50"
+                                className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm outline-none focus:border-indigo-500 transition-all text-white placeholder-gray-500 disabled:opacity-50"
                             />
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={startRecording}
-                                    title="Speak to AI"
-                                    disabled={loading || isFinalizing}
-                                    className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-4 rounded-2xl transition-all border border-white/10 disabled:opacity-50"
-                                >
-                                    <Mic size={24} />
-                                </button>
-                                <button
-                                    onClick={() => handleSend()}
-                                    disabled={loading || !input.trim() || isFinalizing}
-                                    className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white p-4 rounded-2xl transition-all shadow-lg shadow-indigo-500/30"
-                                >
-                                    <Send size={24} />
-                                </button>
-                            </div>
+                            <button
+                                onClick={startRecording}
+                                title="Voice"
+                                disabled={loading || isFinalizing}
+                                className="bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white p-3 rounded-2xl transition-all border border-white/10 disabled:opacity-50 shrink-0"
+                            >
+                                <Mic size={20} />
+                            </button>
+                            <button
+                                onClick={() => handleSend()}
+                                disabled={loading || !input.trim() || isFinalizing}
+                                className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white p-3 rounded-2xl transition-all shadow-lg shadow-indigo-500/30 shrink-0"
+                            >
+                                <Send size={20} />
+                            </button>
                         </div>
                     )}
-                    {error && <p className="mt-2 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12} /> {error}</p>}
+                    {error && <p className="mt-2 text-[10px] text-red-400 flex items-center gap-1"><AlertCircle size={10} /> {error}</p>}
                 </div>
 
                 <button
