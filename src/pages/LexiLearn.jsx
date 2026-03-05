@@ -14,12 +14,8 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [timeLeft, setTimeLeft] = useState(300);
-    const [vocabBank, setVocabBank] = useState([
-        { tier1: 'big', tier2: 'monumental', tier3: 'colossal' },
-        { tier1: 'small', tier2: 'diminutive', tier3: 'minuscule' },
-        { tier1: 'happy', tier2: 'ecstatic', tier3: 'jubilant' },
-        { tier1: 'bad', tier2: 'adverse', tier3: 'deleterious' }
-    ]);
+    const [vocabBank, setVocabBank] = useState([]);
+    const [loadingVocab, setLoadingVocab] = useState(true);
     const [loading, setLoading] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -30,6 +26,29 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     const scrollRef = useRef(null);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
+
+    useEffect(() => {
+        const fetchVocabulary = async () => {
+            setLoadingVocab(true);
+            try {
+                const res = await api.post('/lexilearn/vocabulary', { topic });
+                if (res.data.success) {
+                    setVocabBank(res.data.data.vocabulary);
+                }
+            } catch (err) {
+                console.error('Failed to fetch vocabulary:', err);
+                setVocabBank([
+                    { tier1: 'big', tier3: 'colossal' },
+                    { tier1: 'small', tier3: 'minuscule' },
+                    { tier1: 'happy', tier3: 'jubilant' },
+                    { tier1: 'bad', tier3: 'deleterious' }
+                ]);
+            } finally {
+                setLoadingVocab(false);
+            }
+        };
+        fetchVocabulary();
+    }, [topic]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -360,7 +379,14 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                     <h4 className="font-bold uppercase tracking-wider text-sm">Lexical Assets</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {vocabBank.map((item, i) => (
+                    {loadingVocab ? (
+                        Array(4).fill(0).map((_, i) => (
+                            <div key={i} className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2 animate-pulse">
+                                <div className="h-3 bg-white/10 rounded w-1/2"></div>
+                                <div className="h-4 bg-white/10 rounded w-3/4"></div>
+                            </div>
+                        ))
+                    ) : vocabBank.map((item, i) => (
                         <div key={i} className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2 hover:border-indigo-500/50 transition-all group cursor-default">
                             <div className="flex justify-between items-center text-[10px] text-gray-500 font-mono">
                                 <span>Basic</span>
