@@ -211,8 +211,8 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
     };
 
     return (
-        <div className="flex flex-col gap-6 h-auto lg:h-[calc(100vh-250px)] animate-slide-up">
-            <div className="flex-1 bg-[#0a0a0c]/60 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col relative border border-white/5 shadow-2xl min-h-[500px]">
+        <div className="flex flex-col gap-6 animate-slide-up">
+            <div className="bg-[#0a0a0c]/60 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col relative border border-white/5 shadow-2xl min-h-[500px] max-h-[600px] lg:max-h-[650px]">
                 {/* Header */}
                 <div className="p-4 md:p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#1a1a2e]/30">
                     <div className="flex items-center gap-3">
@@ -353,13 +353,13 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                 </button>
             </div>
 
-            {/* Vocabulary Bank - Always visible on mobile */}
+            {/* Vocabulary Bank - Always visible */}
             <div className="w-full glass rounded-3xl p-4 md:p-6 flex flex-col gap-4 md:gap-6">
                 <div className="flex items-center gap-2 text-indigo-400">
                     <Languages size={20} />
                     <h4 className="font-bold uppercase tracking-wider text-sm">Lexical Assets</h4>
                 </div>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {vocabBank.map((item, i) => (
                         <div key={i} className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2 hover:border-indigo-500/50 transition-all group cursor-default">
                             <div className="flex justify-between items-center text-[10px] text-gray-500 font-mono">
@@ -373,12 +373,12 @@ const InteractiveScaffolding = ({ onComplete, topic, onWordsSuggested }) => {
                             </div>
                         </div>
                     ))}
-                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex gap-3">
-                        <Lightbulb className="text-amber-400 shrink-0" size={18} />
-                        <p className="text-[10px] text-amber-200/80 leading-relaxed">
-                            Tip: I'll correct your grammar in real-time. Don't be afraid to make mistakes!
-                        </p>
-                    </div>
+                </div>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex gap-3">
+                    <Lightbulb className="text-amber-400 shrink-0" size={18} />
+                    <p className="text-[10px] text-amber-200/80 leading-relaxed">
+                        Tip: I'll correct your grammar in real-time. Don't be afraid to make mistakes!
+                    </p>
                 </div>
             </div>
         </div>
