@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default config
 const getBaseURL = () => {
-    let url = import.meta.env.VITE_API_URL || 'https://backend-lexilearn.onrender.com/api';
+    let url = import.meta.env.VITE_API_URL || 'https://lexilearndz.com/api';
 
     // Ensure URL ends with /api
     if (!url.endsWith('/api') && !url.endsWith('/api/')) {
